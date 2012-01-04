@@ -1,0 +1,25 @@
+Insertion-order retaining collections (IORC) for Scala.
+
+MOTIVATION:
+
+IORC provides mutable and immutable Set and Map collections in which
+the element order remains the same after additional inserts.
+
+Currently, the Scala library offers some of these functionalities through
+scala.collection.mutable.{LinkedHashSet, LinkedHashMap} and
+scala.collection.immutable.{ListSet, ListMap} collections but these
+implementations do not provide constant time element access.
+
+With IORC mutable collections it is possible to achieve O(1) insertion,
+retrieval and removal of elements through additional overhead of having
+two underlying collections. It is best suited for smaller collection
+sizes where the price of the additional memory footprint can be leveraged
+against constant time access.
+
+IORC immutable collections offer dual retrieval options, either through
+an IndexedSeq or through a Set.
+
+NOTICE:
+
+Currently a lot of code has been commented out due to never getting ported
+to Scala 2.9.x. Time, time, time ...

@@ -1,0 +1,8 @@
+Some commonly used utilities for scala.        
+
+Current contents:
+  * Insertion order retaining collections
+  * A simple image processing library
+  * Some type pimps
+  
+The code from these projects is free software released into the public domain.
