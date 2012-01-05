@@ -15,7 +15,9 @@ object Pimps {
 
 /** Provides the <code>times</code> method for anonymous iteration.
  */
-  implicit def pimpMyInt(i: Int) = new {
+  implicit def pimpMyInt(i: Int) = new PimpedInt(i)
+  
+  class PimpedInt(i: Int) {
     def times(body: => Unit) { (1 to i).foreach(_ => body) }
   }
 
@@ -23,7 +25,9 @@ object Pimps {
 
 /** Converts boolean to "yes" / "no" String values.
  */
-  implicit def pimpMyBoolean(b: Boolean) = new {
+  implicit def pimpMyBoolean(b: Boolean) = new PimpedBoolean(b)
+  
+  class PimpedBoolean(b: Boolean) {
     def toYN = if (b) "yes" else "no"
   }
 
@@ -35,7 +39,9 @@ object Pimps {
   */
   val WhiteSpaces = """[\s\xA0]+""".r
 
-  implicit def pimpMyString(s: String) = new {
+  implicit def pimpMyString(s: String) = new PimpedString(s)
+
+  class PimpedString(s: String) {
     def ksp = WhiteSpaces.replaceAllIn(s," ") trim
     def kas = WhiteSpaces.replaceAllIn(s,"")
   }
@@ -45,13 +51,17 @@ object Pimps {
 /** Provides the <code>random</code> functionality for getting a random
  *  value constrained by the underlying <code>Range</code>.
  */
-  implicit def pimpMyRange( r: Range ) = new {
+  implicit def pimpMyRange( r: Range ) = new PimpedRange(r)
+  
+  class PimpedRange(r: Range) {
     def random = r( Random.nextInt(r.size) )
   }
 
 /** Enables manual method listing in REPL.
  */
-  implicit def pimpMyAny( a: AnyRef ) = new {
+  implicit def pimpMyAnyRef( a: AnyRef ) = new PimpedAnyRef(a)
+  
+  class PimpedAnyRef(a: AnyRef) {
     def gdm {
       a.getClass.getDeclaredMethods.foreach(println)
     }
@@ -72,7 +82,9 @@ object Pimps {
   Returns all matcher objects from a regex search.
   */
 
-  implicit def pimpMyRegex(r: Regex) = new {
+  implicit def pimpMyRegex(r: Regex) = new PimpedRegex(r)
+  
+  class PimpedRegex(r: Regex) {
     def findAllMatchesIn(s: String): List[Regex.Match] = {
       r.findFirstMatchIn(s) match {
         case Some(e: Regex.Match) =>

@@ -23,3 +23,9 @@ NOTICE:
 
 Currently a lot of code has been commented out due to never getting ported
 to Scala 2.9.x. Time, time, time ...
+
+SBT:
+
+resolvers += "Element Releases" at "http://maven.element.hr/nexus/content/repositories/releases/"
+
+libraryDependencies += "hr.element.etb" %% "etb-iorc" % "0.1.0"

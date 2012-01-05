@@ -1,1 +1,5 @@
 Basic raster image manipulations in Scala.
+
+resolvers += "Element Releases" at "http://maven.element.hr/nexus/content/repositories/releases/"
+
+libraryDependencies += "hr.element.etb" %% "etb-img" % "0.1.0"

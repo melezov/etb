@@ -16,7 +16,7 @@ object BuildSettings {
     organization := "hr.element.etb",
     crossScalaVersions := Seq("2.9.1", "2.9.0-1", "2.9.0"),
     scalaVersion <<= (crossScalaVersions) { versions => versions.head },
-    scalacOptions := Seq("-unchecked", "-deprecation", "-Yrepl-sync", "-encoding", "UTF-8", "-optimise"),
+    scalacOptions := Seq("-unchecked", "-deprecation", "-encoding", "UTF-8", "-optimise"),
     javacOptions := Seq("-deprecation", "-encoding", "UTF-8", "-source", "1.5", "-target", "1.5"),
     compileOrder := CompileOrder.JavaThenScala,
     publishArtifact in (Compile, packageDoc) := false,
@@ -24,55 +24,65 @@ object BuildSettings {
     externalResolvers <<= resolvers map { rs =>
       Resolver.withDefaultResolvers(rs, mavenCentral = false, scalaTools = false)
     },
-    publishTo := Some("Element Nexus" at "http://maven.element.hr/nexus/content/repositories/releases/"),
+    publishTo := Some("Element Releases" at "http://maven.element.hr/nexus/content/repositories/releases/"),
     credentials += Credentials(Path.userHome / ".publish" / "element.credentials")
+  ) ++ Format.settings
+
+  val bsUtil = commonSettings ++ Seq(
+    name    := "Etb-Util",
+    version := "0.2.0"
   )
 
   val bsIORC = commonSettings ++ Seq(
-    name    := "IORC",
-    version := "0.0.21"
+    name    := "Etb-IORC",
+    version := "0.1.0"
   )
 
   val bsImg = commonSettings ++ Seq(
-    name    := "Img",
-    version := "0.0.4"
-  )
-
-  val bsEtb = commonSettings ++ Seq(
-    name    := "Etb",
-    version := "0.1.22"
+    name    := "Etb-Img",
+    version := "0.1.0"
   )
 }
 
 object Dependencies {
-  val iorc = "hr.element.etb" %% "iorc" % "0.0.21"
-  val img = "hr.element.etb" %% "img" % "0.0.4"
-
-  val jodaTime = "joda-time" % "joda-time" % "1.6.2"
-  val scalaTime = "org.scala-tools.time" %% "time" % "0.5"
-  val commonsIo = "commons-io" % "commons-io" % "2.1" % "test"
-
   val scalaTest = "org.scalatest" %% "scalatest" % "1.6.1" % "test"
 
+  val depsUtil = Seq(
+    //test
+    scalaTest
+  )
+
   val depsIORC = Seq(
+    //test
     scalaTest
   )
 
   val depsImg = Seq(
-    scalaTest
-  )
-
-  val depsEtb = Seq(
-    iorc,
-    img,
-    scalaTime,
+    //test
     scalaTest
   )
 }
 
-object EtbxBuild extends Build {
+object EtbBuild extends Build {
   import Dependencies._
   import BuildSettings._
+
+  lazy val etb = Project(
+    "etb",
+    file(".")
+  ) aggregate(
+    util,
+    iorc,
+    img
+  )    
+  
+  lazy val util = Project(
+    "util",
+    file("util"),
+    settings = bsUtil ++ Seq(
+      libraryDependencies := depsUtil
+    )
+  )
 
   lazy val iorc = Project(
     "iorc",
@@ -89,12 +99,36 @@ object EtbxBuild extends Build {
       libraryDependencies := depsImg
     )
   )
+}
 
-  lazy val etb = Project(
-    "etb",
-    file("etb"),
-    settings = bsEtb ++ Seq(
-      libraryDependencies := depsEtb
-    )
-  )
+object Format {
+  // Scalariform plugin
+  import com.typesafe.sbtscalariform._
+  import ScalariformPlugin._
+  import scalariform.formatter.preferences._
+
+  ScalariformKeys.preferences := FormattingPreferences()
+    .setPreference(AlignParameters, false)
+    .setPreference(AlignSingleLineCaseStatements, false)
+    .setPreference(AlignSingleLineCaseStatements.MaxArrowIndent, 40)
+    .setPreference(CompactControlReadability, true)
+    .setPreference(CompactStringConcatenation, false)
+    .setPreference(DoubleIndentClassDeclaration, true)
+    .setPreference(FormatXml, false)
+    .setPreference(IndentLocalDefs, false)
+    .setPreference(IndentPackageBlocks, false)
+    .setPreference(IndentSpaces, 2)
+    .setPreference(IndentWithTabs, false)
+    .setPreference(MultilineScaladocCommentsStartOnFirstLine, true)
+    .setPreference(PlaceScaladocAsterisksBeneathSecondAsterisk, true)
+    .setPreference(PreserveDanglingCloseParenthesis, false)
+    .setPreference(PreserveSpaceBeforeArguments, false)
+    .setPreference(RewriteArrowSymbols, false)
+    .setPreference(SpaceBeforeColon, false)
+    .setPreference(SpaceInsideBrackets, false)
+    .setPreference(SpaceInsideParentheses, false)
+    .setPreference(SpacesWithinPatternBinders, true)
+
+  lazy val settings =
+    ScalariformPlugin.defaultScalariformSettings
 }
