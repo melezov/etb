@@ -74,8 +74,8 @@ object EtbBuild extends Build {
     util,
     iorc,
     img
-  )    
-  
+  )
+
   lazy val util = Project(
     "util",
     file("util"),
@@ -130,5 +130,5 @@ object Format {
     .setPreference(SpacesWithinPatternBinders, true)
 
   lazy val settings =
-    ScalariformPlugin.defaultScalariformSettings
+    ScalariformPlugin.scalariformSettings
 }

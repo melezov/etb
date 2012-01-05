@@ -1,7 +1,7 @@
 package scala.collection.immutable
 
 import scala.collection.SetLike
-import scala.collection.generic.{ImmutableSetFactory, CanBuildFrom, GenericSetTemplate, GenericCompanion}
+import scala.collection.generic.{ ImmutableSetFactory, CanBuildFrom, GenericSetTemplate, GenericCompanion }
 
 object IndexedSeqSet extends ImmutableSetFactory[IndexedSeqSet] {
   implicit def canBuildFrom[A]: CanBuildFrom[Coll, A, IndexedSeqSet[A]] = setCanBuildFrom
@@ -10,10 +10,10 @@ object IndexedSeqSet extends ImmutableSetFactory[IndexedSeqSet] {
 
 @SerialVersionUID(0x70747D637D2FEEE4L) // sha1("scala.collection.immutable.IndexedSeqSet-0.1.x")
 class IndexedSeqSet[A] private (
-    private val _seq: IndexedSeq[A],
-    private val _set: Set[A]) extends Set[A]
-                        with GenericSetTemplate[A, IndexedSeqSet]
-                        with scala.collection.SetLike[A, IndexedSeqSet[A]] {
+  private val _seq: IndexedSeq[A],
+  private val _set: Set[A]) extends Set[A]
+    with GenericSetTemplate[A, IndexedSeqSet]
+    with scala.collection.SetLike[A, IndexedSeqSet[A]] {
   override def companion: GenericCompanion[IndexedSeqSet] = IndexedSeqSet
   override def stringPrefix = "RetSet"
 
@@ -22,27 +22,25 @@ class IndexedSeqSet[A] private (
   def contains(elem: A): Boolean =
     _set.contains(elem)
 
-  def + (elem: A): IndexedSeqSet[A] =
+  def +(elem: A): IndexedSeqSet[A] =
     if (contains(elem)) this
-      else new IndexedSeqSet(_seq :+ elem, _set + elem)
+    else new IndexedSeqSet(_seq :+ elem, _set + elem)
 
-  def - (elem: A): IndexedSeqSet[A] =
+  def -(elem: A): IndexedSeqSet[A] =
     if (!contains(elem)) this
-      else new IndexedSeqSet(_seq.filter(_!=elem), _set - elem)
+    else new IndexedSeqSet(_seq.filter(_ != elem), _set - elem)
 
-  def ++ (that: IndexedSeqSet[A]): IndexedSeqSet[A] = {
+  def ++(that: IndexedSeqSet[A]): IndexedSeqSet[A] = {
     if (that.isEmpty) {
       this
-    }
-    else if (isEmpty) {
+    } else if (isEmpty) {
       that
-    }
-    else{
+    } else {
       super.++(that)
     }
   }
 
-  def ++ (that: IndexedSeq[A]): IndexedSeqSet[A] = {
+  def ++(that: IndexedSeq[A]): IndexedSeqSet[A] = {
     val minLen = _set.size
     val empLen = that.size
     val maxLen = minLen + empLen
@@ -50,7 +48,7 @@ class IndexedSeqSet[A] private (
     val newSet = _set ++ that
     newSet.size match {
       case `minLen` =>
-         /* All elements are already contained, noop */
+        /* All elements are already contained, noop */
         this
 
       case `empLen` =>
@@ -70,7 +68,7 @@ class IndexedSeqSet[A] private (
     }
   }
 
-  def ++ (that: Set[A]): IndexedSeqSet[A] = {
+  def ++(that: Set[A]): IndexedSeqSet[A] = {
     val minLen = _set.size
     val empLen = that.size
     val maxLen = minLen + empLen
@@ -78,7 +76,7 @@ class IndexedSeqSet[A] private (
     val newSet = _set ++ that
     newSet.size match {
       case `minLen` =>
-         /* All elements are already contained, noop */
+        /* All elements are already contained, noop */
         this
 
       case `empLen` =>

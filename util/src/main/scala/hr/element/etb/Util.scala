@@ -2,7 +2,7 @@ package hr.element.etb
 
 import scala.annotation.tailrec
 
-object Util{
+object Util {
   def waitUntil(timeout: Long, resolution: Long)(predicate: => Boolean) = {
 
     @tailrec

@@ -1,7 +1,6 @@
 package hr.element.etb.img
 
-trait Img extends Cloneable
-{
+trait Img extends Cloneable {
   val w: Int
   val h: Int
   val s = w * h

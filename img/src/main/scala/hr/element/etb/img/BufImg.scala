@@ -1,8 +1,14 @@
 package hr.element.etb.img
 
-import java.io.{File, InputStream, OutputStream,
-  FileInputStream, FileOutputStream,
-  ByteArrayInputStream, ByteArrayOutputStream}
+import java.io.{
+  File,
+  InputStream,
+  OutputStream,
+  FileInputStream,
+  FileOutputStream,
+  ByteArrayInputStream,
+  ByteArrayOutputStream
+}
 import java.awt.Color
 import java.awt.RenderingHints
 import java.awt.image.BufferedImage
@@ -10,11 +16,11 @@ import javax.imageio.ImageIO
 
 import java.util.Arrays
 
-object BufImg{
+object BufImg {
   def fromStream(iS: InputStream): BufImg = {
     val lI = ImageIO.read(iS)
     val nI = new BufImg(lI.getWidth, lI.getHeight)
-    nI.withG2D{ _.drawImage(lI, 0, 0, null) }
+    nI.withG2D { _.drawImage(lI, 0, 0, null) }
     nI
   }
 
@@ -28,7 +34,7 @@ object BufImg{
     nI
   }
 
-//  ---------------------------------------------------------------------------
+  //  ---------------------------------------------------------------------------
 
   def toStream(buffImage: BufferedImage, oS: OutputStream, format: String = "png") {
     ImageIO.write(buffImage, format, oS)
@@ -46,7 +52,7 @@ object BufImg{
     bAOS.toByteArray
   }
 
-//  ---------------------------------------------------------------------------
+  //  ---------------------------------------------------------------------------
 
   def getPx(buffImage: BufferedImage) = buffImage.getType match {
     case BufferedImage.TYPE_INT_RGB | BufferedImage.TYPE_INT_ARGB =>
@@ -66,7 +72,7 @@ class BufImg(val w: Int, val h: Int)
     extends BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB)
     with Img {
 
-//  ---------------------------------------------------------------------------
+  //  ---------------------------------------------------------------------------
 
   def toBufImg = this
   def toMemImg = new MemImg(w, h, BufImg.getPx(this))
@@ -77,7 +83,7 @@ class BufImg(val w: Int, val h: Int)
     nI
   }
 
-//  ---------------------------------------------------------------------------
+  //  ---------------------------------------------------------------------------
 
   def getPx() =
     BufImg.getPx(this)
@@ -85,7 +91,7 @@ class BufImg(val w: Int, val h: Int)
   def setPx(px: Array[Int]) =
     BufImg.setPx(this, px)
 
-//  ---------------------------------------------------------------------------
+  //  ---------------------------------------------------------------------------
 
   def withG2D(f: java.awt.Graphics2D => Unit): Unit = {
     val g2D = super.createGraphics();
@@ -95,14 +101,14 @@ class BufImg(val w: Int, val h: Int)
     g2D.dispose()
   }
 
-//  ---------------------------------------------------------------------------
+  //  ---------------------------------------------------------------------------
 
-  def fill(col: Int) = withG2D{ g =>
+  def fill(col: Int) = withG2D { g =>
     g.setColor(new Color(col))
     g.fillRect(0, 0, w, h)
   }
 
-//  ---------------------------------------------------------------------------
+  //  ---------------------------------------------------------------------------
 
   def crop(dXY: Int) = {
     val nI = new BufImg(w + (dXY << 1), h + (dXY << 1))
@@ -110,30 +116,30 @@ class BufImg(val w: Int, val h: Int)
     nI
   }
 
-  def bitBlt(iI: Img, pX: Int, pY: Int): Unit = withG2D{
+  def bitBlt(iI: Img, pX: Int, pY: Int): Unit = withG2D {
     _.drawImage(iI.toBufImg, pX, pY, null)
   }
 
-//  ---------------------------------------------------------------------------
+  //  ---------------------------------------------------------------------------
 
   def thumbnail(maxW: Int, maxH: Int): BufImg = {
 
     def adjustSize(oW: Int, oH: Int, maxW: Int, maxH: Int) = {
       var w = oW
       var h = oH
-      if ( w > maxW ) { h = h * maxW / w; w = maxW }
-      if ( h > maxH ) { w = w * maxH / h; h = maxH }
+      if (w > maxW) { h = h * maxW / w; w = maxW }
+      if (h > maxH) { w = w * maxH / h; h = maxH }
       (w, h)
     }
 
     val (cW, cH) = adjustSize(w, h, maxW, maxH)
     val iI = getScaledInstance(cW, cH, java.awt.Image.SCALE_AREA_AVERAGING)
     val nI = new BufImg(cW, cH)
-    nI.withG2D{_.drawImage(iI, 0, 0, null)}
+    nI.withG2D { _.drawImage(iI, 0, 0, null) }
     nI
   }
 
-//  ---------------------------------------------------------------------------
+  //  ---------------------------------------------------------------------------
 
   override def equals(other: Any) = other match {
     case bI: BufImg =>
