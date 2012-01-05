@@ -8,4 +8,15 @@
 
 resolvers += Classpaths.typesafeResolver
 
-addSbtPlugin("com.typesafe.sbteclipse" % "sbteclipse" % "1.5.0")
+addSbtPlugin("com.typesafe.sbteclipse" % "sbteclipse-plugin" % "2.0.0-M2")
+
+// +------------------------------------------------------------------------------------+
+// | SBT Scalariform (https://github.com/typesafehub/sbt-scalariform)                   |
+// | Performs source code formatting                                                    |
+// |                                                                                    |
+// | See also: Scalariform reference (http://mdr.github.com/scalariform/)               |
+// +------------------------------------------------------------------------------------+
+
+resolvers += Classpaths.typesafeResolver
+
+addSbtPlugin("com.typesafe.sbtscalariform" % "sbtscalariform" % "0.3.0")

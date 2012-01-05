@@ -8,13 +8,12 @@ object IndexedSeqSet extends ImmutableSetFactory[IndexedSeqSet] {
   override def empty[A]: IndexedSeqSet[A] = new IndexedSeqSet(IndexedSeq.empty, Set.empty)
 }
 
-@SerialVersionUID(0xAB16FC9E83F88EC7L) // sha1("scala.collection.immutable.IndexedSeqSet-0").take(8)
+@SerialVersionUID(0x70747D637D2FEEE4L) // sha1("scala.collection.immutable.IndexedSeqSet-0.1.x")
 class IndexedSeqSet[A] private (
     private val _seq: IndexedSeq[A],
     private val _set: Set[A]) extends Set[A]
                         with GenericSetTemplate[A, IndexedSeqSet]
                         with scala.collection.SetLike[A, IndexedSeqSet[A]] {
-//                        with Serializable {
   override def companion: GenericCompanion[IndexedSeqSet] = IndexedSeqSet
   override def stringPrefix = "RetSet"
 
@@ -66,7 +65,7 @@ class IndexedSeqSet[A] private (
         /* Only some of the new elements need to be added.          */
         /* This means that either we already contained some of the  */
         /* elements, or that the provided IndexedSeq had duplicates */
-        val seqDelta = that.distinct
+        val seqDelta = that.filterNot(_set).distinct
         new IndexedSeqSet(_seq ++ seqDelta, newSet)
     }
   }
@@ -91,9 +90,8 @@ class IndexedSeqSet[A] private (
         new IndexedSeqSet(_seq ++ that, newSet)
 
       case _ =>
-        /* Only some of the new elements need to be added.          */
-        /* This means that either we already contained some of the  */
-        /* elements, or that the provided IndexedSeq had duplicates */
+        /* Only some of the new elements need to be added.           */
+        /* This means that we already contained some of the elements */
         val setDelta = that.toIndexedSeq.filterNot(_set)
         new IndexedSeqSet(_seq ++ setDelta, newSet)
     }

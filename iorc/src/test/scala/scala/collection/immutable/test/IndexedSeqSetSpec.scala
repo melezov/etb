@@ -1,9 +1,11 @@
 package scala.collection.immutable.test
 
 import org.scalatest._
+import matchers._
+
 import scala.collection.immutable.{IndexedSeqSet, TreeSet, BitSet, ListSet}
 
-class IndexedSeqSetSpec extends FeatureSpec with GivenWhenThen {
+class IndexedSeqSetSpec extends FeatureSpec with GivenWhenThen with MustMatchers {
 
   feature("IndexedSeqSet must reuse its constructing collections if possible") {
 
@@ -202,6 +204,20 @@ class IndexedSeqSetSpec extends FeatureSpec with GivenWhenThen {
         then("a new IndexedSeqSet must not be created")
         assert(iSS eq iSSnew)
       }
+    }
+  }
+
+  feature("IndexedSeqSet must behave like a Set") {
+
+    info("IndexedSeqSet must reject duplicate elements")
+
+    scenario("A range is added to IndexedSeqSet") {
+      given("an IndexedSeqSet containing a range of numbers")
+      val iSS = IndexedSeqSet.empty ++ (1 to 100)
+      when("an overlapping range is added to the IndexedSeqSet")
+      val rng = 11 to 110
+      then("the new IndexedSeqSet must be the union of ranges")
+      (iSS ++ rng).size must be (rng.end)
     }
   }
 }
