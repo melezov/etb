@@ -2,6 +2,8 @@ package hr.element.etb
 
 import scala.util.Random
 import scala.util.matching.Regex
+import scala.xml.{ XML, Elem, PrettyPrinter }
+import java.io.{ StringWriter, PrintWriter }
 
 /**
  * The object <code>Pimps</code> provides helper methods for primitives
@@ -12,13 +14,11 @@ import scala.util.matching.Regex
  *  @since   0.1
  */
 
-object Pimps {
+object Pimps extends Pimps {
 
   /**
    * Provides the <code>times</code> method for anonymous iteration.
    */
-  implicit def pimpMyInt(i: Int) = new PimpedInt(i)
-
   class PimpedInt(i: Int) {
     def times(body: => Unit) { (1 to i).foreach(_ => body) }
   }
@@ -28,8 +28,6 @@ object Pimps {
   /**
    * Converts boolean to "yes" / "no" String values.
    */
-  implicit def pimpMyBoolean(b: Boolean) = new PimpedBoolean(b)
-
   class PimpedBoolean(b: Boolean) {
     def toYN = if (b) "yes" else "no"
   }
@@ -40,9 +38,7 @@ object Pimps {
    * String helper class with one method which removes all repeating
    * whitespaces, new lines and non braking spaces (&nbsp;).
    */
-  val WhiteSpaces = """[\s\xA0]+""".r
-
-  implicit def pimpMyString(s: String) = new PimpedString(s)
+  private val WhiteSpaces = """[\s\xA0]+""".r
 
   class PimpedString(s: String) {
     def ksp = WhiteSpaces.replaceAllIn(s, " ") trim
@@ -55,8 +51,6 @@ object Pimps {
    * Provides the <code>random</code> functionality for getting a random
    *  value constrained by the underlying <code>Range</code>.
    */
-  implicit def pimpMyRange(r: Range) = new PimpedRange(r)
-
   class PimpedRange(r: Range) {
     def random = r(Random.nextInt(r.size))
   }
@@ -64,8 +58,6 @@ object Pimps {
   /**
    * Enables manual method listing in REPL.
    */
-  implicit def pimpMyAnyRef(a: AnyRef) = new PimpedAnyRef(a)
-
   class PimpedAnyRef(a: AnyRef) {
     def gdm {
       a.getClass.getDeclaredMethods.foreach(println)
@@ -86,9 +78,6 @@ object Pimps {
   /**
    * Returns all matcher objects from a regex search.
    */
-
-  implicit def pimpMyRegex(r: Regex) = new PimpedRegex(r)
-
   class PimpedRegex(r: Regex) {
     def findAllMatchesIn(s: String): List[Regex.Match] = {
       r.findFirstMatchIn(s) match {
@@ -99,4 +88,52 @@ object Pimps {
       }
     }
   }
+
+  /**
+   * Provides a short-hand for pretty printing XML
+   */
+  private object PimpedElem extends PrettyPrinter(80, 2)
+
+  class PimpedElem(e: Elem) {
+    def prettyPrint = XML.loadString(PimpedElem.format(e))
+  }
+
+  /**
+   * Gets the stack trace in String form
+   */
+  class PimpedThrowable(t: Throwable) {
+    def stackTraceString: String = {
+      val sW = new StringWriter
+      t.printStackTrace(new PrintWriter(sW))
+      sW.toString
+    }
+  }
+}
+
+trait Pimps {
+  import Pimps._
+
+  implicit def pimpMyInt(i: Int) =
+    new PimpedInt(i)
+
+  implicit def pimpMyBoolean(b: Boolean) =
+    new PimpedBoolean(b)
+
+  implicit def pimpMyString(s: String) =
+    new PimpedString(s)
+
+  implicit def pimpMyRange(r: Range) =
+    new PimpedRange(r)
+
+  implicit def pimpMyAnyRef(a: AnyRef) =
+    new PimpedAnyRef(a)
+
+  implicit def pimpMyRegex(r: Regex) =
+    new PimpedRegex(r)
+
+  implicit def pimpMyElem(e: Elem) =
+    new PimpedElem(e)
+
+  implicit def pimpMyThrowable(t: Throwable) =
+    new PimpedThrowable(t)
 }
