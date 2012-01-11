@@ -1,0 +1,7 @@
+Some utility classes and snippets for the Lift framework.
+
+SBT:
+
+resolvers += "Element Releases" at "http://maven.element.hr/nexus/content/repositories/releases/"
+
+libraryDependencies += "hr.element.lift" %% "etb-lift" % "0.0.1"

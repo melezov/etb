@@ -33,6 +33,11 @@ object BuildSettings {
     version := "0.2.3"
   )
 
+  val bsLift = commonSettings ++ Seq(
+    name    := "Etb-Lift",
+    version := "0.0.1"
+  )
+
   val bsIORC = commonSettings ++ Seq(
     name    := "Etb-IORC",
     version := "0.1.0"
@@ -45,9 +50,20 @@ object BuildSettings {
 }
 
 object Dependencies {
+  //liftweb
+  val liftVersion = "2.4-RC1"
+  val liftWebkit = "net.liftweb" %% "lift-webkit" % liftVersion
+
+  //test
   val scalaTest = "org.scalatest" %% "scalatest" % "1.6.1" % "test"
 
   val depsUtil = Seq(
+    //test
+    scalaTest
+  )
+
+  val depsLift = Seq(
+    liftWebkit,
     //test
     scalaTest
   )
@@ -81,6 +97,14 @@ object EtbBuild extends Build {
     file("util"),
     settings = bsUtil ++ Seq(
       libraryDependencies := depsUtil
+    )
+  )
+
+  lazy val lift = Project(
+    "lift",
+    file("lift"),
+    settings = bsLift ++ Seq(
+      libraryDependencies := depsLift
     )
   )
 
