@@ -5,7 +5,10 @@ import net.liftweb.util.Props
 import net.liftweb.http.S
 import net.liftweb.common._
 
-abstract class StaticScripts(root: String) {
+trait StaticScripts {
+  val root = "static"
+  val section = "js"
+
   def serveScript(typ: String, ver: String, min: String) = {
     val suffix = min match {
       case "all" =>
@@ -16,7 +19,14 @@ abstract class StaticScripts(root: String) {
         ""
     }
 
-    val path = "/%s/js/%s%s%s.js" format (root, typ, ver, suffix);
+    val path = "/%s/%s/%s%s%s.js" format (
+      root,
+      section,
+      typ,
+      ver,
+      suffix
+    )
+
     <script type="text/javascript" src={ path }/>
   }
 
