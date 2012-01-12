@@ -2,7 +2,7 @@ package hr.element.etb
 
 import scala.util.Random
 import scala.util.matching.Regex
-import scala.xml.{ XML, Elem, PrettyPrinter }
+import scala.xml.{ XML, Elem, NodeSeq, PrettyPrinter }
 import java.io.{ StringWriter, PrintWriter }
 
 /**
@@ -89,13 +89,20 @@ object Pimps extends Pimps {
     }
   }
 
+  private object PrettyPrinter80 extends PrettyPrinter(80, 2)
+
   /**
    * Provides a short-hand for pretty printing XML
    */
-  private object PimpedElem extends PrettyPrinter(80, 2)
-
   class PimpedElem(e: Elem) {
-    def prettyPrint = XML.loadString(PimpedElem.format(e))
+    def prettyPrint = XML.loadString(PrettyPrinter80.format(e))
+  }
+
+  /**
+   * Provides a short-hand for pretty printing XML
+   */
+  class PimpedNodeSeq(ns: NodeSeq) {
+    def prettyPrintString = PrettyPrinter80.formatNodes(ns)
   }
 
   /**
@@ -133,6 +140,9 @@ trait Pimps {
 
   implicit def pimpMyElem(e: Elem) =
     new PimpedElem(e)
+
+  implicit def pimpMyNodeSeq(ns: NodeSeq) =
+    new PimpedNodeSeq(ns)
 
   implicit def pimpMyThrowable(t: Throwable) =
     new PimpedThrowable(t)
