@@ -17,8 +17,8 @@ object BuildSettings {
     crossScalaVersions := Seq("2.9.1", "2.9.0-1", "2.9.0"),
     scalaVersion <<= (crossScalaVersions) { versions => versions.head },
     scalacOptions := Seq("-unchecked", "-deprecation", "-encoding", "UTF-8", "-optimise"),
-    javacOptions := Seq("-deprecation", "-encoding", "UTF-8", "-source", "1.5", "-target", "1.5"),
-    compileOrder := CompileOrder.JavaThenScala,
+    unmanagedSourceDirectories in Compile <<= (scalaSource in Compile)( _ :: Nil),
+    unmanagedSourceDirectories in Test    <<= (scalaSource in Test   )( _ :: Nil),
     publishArtifact in (Compile, packageDoc) := false,
     resolvers := res,
     externalResolvers <<= resolvers map { rs =>
@@ -30,12 +30,12 @@ object BuildSettings {
 
   val bsUtil = commonSettings ++ Seq(
     name    := "Etb-Util",
-    version := "0.2.3"
+    version := "0.2.5"
   )
 
   val bsLift = commonSettings ++ Seq(
     name    := "Etb-Lift",
-    version := "0.0.2"
+    version := "0.0.3"
   )
 
   val bsIORC = commonSettings ++ Seq(
@@ -51,7 +51,7 @@ object BuildSettings {
 
 object Dependencies {
   //liftweb
-  val liftVersion = "2.4-RC1"
+  val liftVersion = "2.4"
   val liftWebkit = "net.liftweb" %% "lift-webkit" % liftVersion
 
   //test

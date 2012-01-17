@@ -55,25 +55,19 @@ object Pimps extends Pimps {
     def random = r(Random.nextInt(r.size))
   }
 
+  // ----------------------------------------------------------------------------
+
   /**
-   * Enables manual method listing in REPL.
+   * For easy classpath retrieval of resources via class reference.
    */
-  class PimpedAnyRef(a: AnyRef) {
-    def gdm {
-      a.getClass.getDeclaredMethods.foreach(println)
-    }
 
-    def gdmx {
-      def getSuperDeclaredMethods(c: Class[_]): List[String] =
-        c.getSuperclass match {
-          case null => Nil
-          case x => getSuperDeclaredMethods(x) ++
-            c.getDeclaredMethods.sortBy(_.getName).map(m => c.getSimpleName + ": " + m).toList
-        }
-
-      getSuperDeclaredMethods(a.getClass) foreach (println)
+  class PimpedClass(c: Class[_]) {
+    def getPackagePath(filename: String) = {
+      '/' + c.getPackage.getName.replace('.', '/') + '/' + filename
     }
   }
+
+  // ----------------------------------------------------------------------------
 
   /**
    * Returns all matcher objects from a regex search.
@@ -132,8 +126,8 @@ trait Pimps {
   implicit def pimpMyRange(r: Range) =
     new PimpedRange(r)
 
-  implicit def pimpMyAnyRef(a: AnyRef) =
-    new PimpedAnyRef(a)
+  implicit def pimpMyClass(c: Class[_]) =
+    new PimpedClass(c)
 
   implicit def pimpMyRegex(r: Regex) =
     new PimpedRegex(r)
