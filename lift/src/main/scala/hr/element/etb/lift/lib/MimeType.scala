@@ -8,16 +8,20 @@ object MimeType {
     "png" -> "image/png",
     "txt" -> "text/plain",
     "dll" -> "application/x-msdownload",
-    "zip" -> "application/x-compressed"
+    "zip" -> "application/x-compressed",
+    "docx" -> "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "xlsx" -> "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    "pdf" -> "application/pdf",
+    "jpg" -> "image/jpeg"
   )
 
-  def fromFileName(fileName: String) = {
-    val index = fileName.lastIndexOf('.')
-    if (index == -1)
-      ""
-    else
-      fileName.substring(index + 1)
-  }
+  def fromFileName(fileName: String) =
+    fileName lastIndexOf '.' match {
+      case x if x > 0 =>
+        map(fileName substring (x + 1))
+      case _ =>
+        "application/octet-stream"
+    }
 }
 
 object BinaryResponse {
