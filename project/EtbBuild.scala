@@ -35,7 +35,7 @@ object BuildSettings {
 
   val bsLift = commonSettings ++ Seq(
     name    := "Etb-Lift",
-    version := "0.0.8"
+    version := "0.0.10"
   )
 
   val bsIORC = commonSettings ++ Seq(
