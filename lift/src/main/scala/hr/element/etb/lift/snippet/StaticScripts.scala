@@ -1,39 +1,61 @@
 package hr.element.etb.lift.snippet
 
-import scala.xml.NodeSeq
-import net.liftweb.util.Props
 import net.liftweb.http.S
-import net.liftweb.common._
+import net.liftweb.util.Props
+import net.liftweb.common.Full
+
+import scala.xml._
 
 trait StaticScripts {
   val root = "static"
   val section = "js"
 
-  def serveScript(typ: String, ver: String, min: String) = {
-    val suffix = min match {
-      case "all" =>
-        ".min"
-      case "prod" if Props.productionMode =>
-        ".min"
-      case _ =>
-        ""
-    }
+  protected val defaultVersions: PartialFunction[String, String] =
+    Map.empty
 
-    val path = "/%s/%s/%s%s%s.js" format (
-      root,
-      section,
-      typ,
-      ver,
-      suffix
+  protected def getNameWithVersion(name: String, version: Option[String]) =
+    name + (
+      version orElse (
+        defaultVersions lift (name)
+      ) map ("-"+) getOrElse ("")
     )
 
+  protected val defaultMinified: PartialFunction[String, String] = {
+    case "all" =>
+      ".min"
+
+    case "prod" if Props.productionMode =>
+      ".min"
+  }
+
+  protected def getSuffix(min: Option[String]) = (
+    defaultMinified lift
+    min.getOrElse("prod")
+    getOrElse ("")
+  )
+
+  def serveScript(name: String,
+    version: Option[String],
+    min: Option[String]) = {
+
+    val filename =
+      getNameWithVersion(name, version) + getSuffix(min)
+
+    val path = "/%s/%s/%s.js" format (root, section, filename)
     <script type="text/javascript" src={ path }/>
   }
 
-  def render(n: NodeSeq): NodeSeq = {
-    val ver = S.attr("version").map("-"+).openOr("")
-    val min = S.attr("min").openOr("none")
-    val typ = S.attr("type").ensuring(_.isDefined, "Scripts type attribute not specified!").open_!
-    serveScript(typ, ver, min)
+  val render = (_: NodeSeq) => {
+    val name = S.attr("name")
+    val version = S.attr("version")
+    val min = S.attr("min")
+
+    name match {
+      case Full(n) =>
+        serveScript(n, version, min)
+
+      case _ =>
+        Comment("FIXME: Script name attribute was not defined!")
+    }
   }
 }
