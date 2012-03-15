@@ -30,7 +30,7 @@ object BuildSettings {
 
   val bsUtil = commonSettings ++ Seq(
     name    := "Etb-Util",
-    version := "0.2.6"
+    version := "0.2.7"
   )
 
   val bsLift = commonSettings ++ Seq(
@@ -55,7 +55,7 @@ object Dependencies {
   val liftWebkit = "net.liftweb" %% "lift-webkit" % liftVersion
 
   //test
-  val scalaTest = "org.scalatest" %% "scalatest" % "1.6.1" % "test"
+  val scalaTest = "org.scalatest" %% "scalatest" % "1.7.1" % "test"
 
   val depsUtil = Seq(
     //test
