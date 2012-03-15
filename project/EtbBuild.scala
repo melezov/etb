@@ -30,7 +30,7 @@ object BuildSettings {
 
   val bsUtil = commonSettings ++ Seq(
     name    := "Etb-Util",
-    version := "0.2.5"
+    version := "0.2.6"
   )
 
   val bsLift = commonSettings ++ Seq(
