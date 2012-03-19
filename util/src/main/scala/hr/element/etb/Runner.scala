@@ -17,7 +17,7 @@ package object io {
 
       val oS = new ByteArrayOutputStream
       val eS = new ByteArrayOutputStream
-      println("timeout je: " + waitPeriod)
+
       val pio = new ProcessIO(
         in = { iSP =>
           val iS = new ByteArrayInputStream(input)
