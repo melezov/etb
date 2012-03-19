@@ -53,13 +53,18 @@ object Dependencies {
   //liftweb
   val liftVersion = "2.4"
   val liftWebkit = "net.liftweb" %% "lift-webkit" % liftVersion
+  val commonsCodec = "commons-codec" % "commons-codec" % "1.6"
+  val dispatch = "net.databinder" %% "dispatch-http" % "0.8.8" % "compile"
 
   //test
   val scalaTest = "org.scalatest" %% "scalatest" % "1.6.1" % "test"
 
   val depsUtil = Seq(
+    commonsCodec,
+    dispatch,
     //test
     scalaTest
+
   )
 
   val depsLift = Seq(
