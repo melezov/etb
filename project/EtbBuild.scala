@@ -14,7 +14,7 @@ object BuildSettings {
 
   val commonSettings = Defaults.defaultSettings ++ Seq(
     organization := "hr.element.etb",
-    crossScalaVersions := Seq("2.9.1", "2.9.0-1", "2.9.0"),
+    crossScalaVersions := Seq("2.9.1-1", "2.9.1", "2.9.0-1", "2.9.0"),
     scalaVersion <<= (crossScalaVersions) { versions => versions.head },
     scalacOptions := Seq("-unchecked", "-deprecation", "-encoding", "UTF-8", "-optimise"),
     unmanagedSourceDirectories in Compile <<= (scalaSource in Compile)( _ :: Nil),
