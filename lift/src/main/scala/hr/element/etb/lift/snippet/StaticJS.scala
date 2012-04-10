@@ -41,7 +41,13 @@ trait StaticJS {
     val filename =
       getNameWithVersion(name, version) + getSuffix(min)
 
-    val path = "/%s/%s/%s.js" format (root, section, filename)
+    val path =
+      if (name.startsWith("../")) {
+        "/%s/%s.js" format (root, filename.substring(3))
+      } else {
+        "/%s/%s/%s.js" format (root, section, filename)
+      }
+
     <script type="text/javascript" src={ path }/>
   }
 
