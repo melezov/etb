@@ -2,23 +2,17 @@ package hr.element.etb.lift.lib
 
 import net.liftweb.http.InMemoryResponse
 
+import hr.element.onebyseven.common.MimeType.{ values => mimes }
+
 object MimeType {
-  val map = Map(
-    "ico" -> "image/vnd.microsoft.icon",
-    "png" -> "image/png",
-    "txt" -> "text/plain",
-    "dll" -> "application/x-msdownload",
-    "zip" -> "application/x-compressed",
-    "docx" -> "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-    "xlsx" -> "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    "pdf" -> "application/pdf",
-    "jpg" -> "image/jpeg"
-  )
+  val Default = "application/octet-stream"
 
   def fromFileName(fileName: String) =
     fileName lastIndexOf '.' match {
       case x if x > 0 =>
-        map(fileName substring (x + 1))
+        val ext = fileName substring (x + 1) toLowerCase;
+        mimes find(_.extension == ext) map(_.mimeType) getOrElse(Default)
+
       case _ =>
         "application/octet-stream"
     }
