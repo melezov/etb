@@ -3,6 +3,8 @@ package hr.element.etb
 import scala.util.Random
 import scala.util.matching.Regex
 import scala.xml.{ XML, Elem, NodeSeq, PrettyPrinter }
+import scala.xml.parsing.ConstructingParser
+import scala.io.Source
 import java.io.{ StringWriter, PrintWriter }
 
 /**
@@ -89,7 +91,9 @@ object Pimps extends Pimps {
    * Provides a short-hand for pretty printing XML
    */
   class PimpedElem(e: Elem) {
-    def prettyPrint = XML.loadString(PrettyPrinter80.format(e))
+    def prettyPrint = ConstructingParser
+      .fromSource(Source.fromString(PrettyPrinter80.format(e)), true)
+      .document.docElem.asInstanceOf[Elem]
   }
 
   /**

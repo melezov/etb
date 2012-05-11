@@ -29,18 +29,19 @@ object BuildSettings {
   )
 
   val bsUtil = commonSettings ++ Seq(
-    name    := "Etb-Util",
-    version := "0.2.9"
+    name    := "Etb-Util"
+  , version := "0.2.10"
+  , initialCommands := "import hr.element.etb.Pimps._" 
   )
 
   val bsLift = commonSettings ++ Seq(
-    name    := "Etb-Lift",
-    version := "0.0.20"
+    name    := "Etb-Lift"
+  , version := "0.0.20"
   )
 
   val bsImg = commonSettings ++ Seq(
-    name    := "Etb-Img",
-    version := "0.1.0"
+    name    := "Etb-Img"
+  , version := "0.1.0"
   )
 }
 
@@ -48,12 +49,12 @@ object Dependencies {
   //liftweb
   val liftVersion = "2.4"
   val liftWebkit = "net.liftweb" % "lift-webkit_2.9.1" % liftVersion
-  
+
   val commonsCodec = "commons-codec" % "commons-codec" % "1.6"
   val dispatch = "net.databinder" %% "dispatch-http" % "0.8.8" % "compile"
 
   val mimeTypes = "hr.element.onebyseven.common" % "mimetypes" % "2012-02-12"
-  
+
   //test
   val scalaTest = "org.scalatest" %% "scalatest" % "1.7.1" % "test"
 
@@ -82,25 +83,25 @@ object EtbBuild extends Build {
   import BuildSettings._
 
   lazy val util = Project(
-    "util",
-    file("util"),
-    settings = bsUtil ++ Seq(
+    "util"
+  , file("util")
+  , settings = bsUtil ++ Seq(
       libraryDependencies := depsUtil
     )
   )
 
   lazy val lift = Project(
-    "lift",
-    file("lift"),
-    settings = bsLift ++ Seq(
+    "lift"
+  , file("lift")
+  , settings = bsLift ++ Seq(
       libraryDependencies := depsLift
     )
   )
 
   lazy val img = Project(
-    "img",
-    file("img"),
-    settings = bsImg ++ Seq(
+    "img"
+  , file("img")
+  , settings = bsImg ++ Seq(
       libraryDependencies := depsImg
     )
   )

@@ -9,4 +9,3 @@ object Serial {
     """@SerialVersionUID(%s) // sha1("%s")""" format (uid, x)
   }
 }
-

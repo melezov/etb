@@ -152,4 +152,3 @@ class BufImg(val w: Int, val h: Int)
   override def toString =
     "BufImg[" + w + "x" + h + "]"
 }
-
