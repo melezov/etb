@@ -8,16 +8,21 @@ import org.apache.http.conn.scheme.Scheme
 
 import dispatch._
 
-class TrustedHttps(truststore: String, truststorePassword: String, ks: String = null, keystorePassword: String = null, Timeout: Int = 2000) extends Http {
+class TrustedHttps(truststore: String, truststorePassword: String, ks: Option[String] = None, keystorePassword: Option[String] = None, Timeout: Option[Int] = None) extends Http {
   client.getConnectionManager.getSchemeRegistry.register(
     new Scheme("https", 443, sslSocketFactory)
   )
 
-  val params = client.getParams
-  import org.apache.http.params.CoreConnectionPNames._
-  params.setParameter(CONNECTION_TIMEOUT, Timeout)
-  params.setParameter(SO_TIMEOUT, Timeout)
-  
+  Timeout match {
+    case None => // Do nothing
+    case Some(x) => {
+      val params = client.getParams
+      import org.apache.http.params.CoreConnectionPNames._
+      params.setParameter(CONNECTION_TIMEOUT, x)
+      params.setParameter(SO_TIMEOUT, x)
+    }
+  }
+   
   private lazy val trustManagers = { 
     val factory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm)
     val keystore = KeyStore.getInstance(KeyStore.getDefaultType)
@@ -27,20 +32,19 @@ class TrustedHttps(truststore: String, truststorePassword: String, ks: String = 
     factory.getTrustManagers
   }
  
-
-  private lazy val keyManagers = { 
+  private def keyManagers(k: String, p: String) = { 
     val kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm)
     val keystore = KeyStore.getInstance("PKCS12");
-    val kS = classOf[TrustedHttps].getResourceAsStream(ks)
-    keystore.load(kS, keystorePassword.toCharArray())
-    kmf.init(keystore, keystorePassword.toCharArray())
+    val kS = classOf[TrustedHttps].getResourceAsStream(k)
+    keystore.load(kS, p.toCharArray())
+    kmf.init(keystore, p.toCharArray())
     kmf.getKeyManagers
   }   
 
   private lazy val sslSocketFactory = { 
-    val km = ks match {
-      case null => null
-      case _ => keyManagers
+    val km = (ks,keystorePassword) match {
+      case (None, None) => null
+      case (Some(k),Some(p)) => keyManagers(k,p)
     }   
     val sslContext = javax.net.ssl.SSLContext.getInstance("TLS")
     sslContext.init(km, trustManagers, new SecureRandom())
