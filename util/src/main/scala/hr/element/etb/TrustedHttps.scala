@@ -8,10 +8,15 @@ import org.apache.http.conn.scheme.Scheme
 
 import dispatch._
 
-class TrustedHttps(truststore: String, truststorePassword: String, ks: String = null, keystorePassword: String = null) extends Http {
+class TrustedHttps(truststore: String, truststorePassword: String, ks: String = null, keystorePassword: String = null, Timeout: Int = 2000) extends Http {
   client.getConnectionManager.getSchemeRegistry.register(
     new Scheme("https", 443, sslSocketFactory)
   )
+
+  val params = client.getParams
+  import org.apache.http.params.CoreConnectionPNames._
+  params.setParameter(CONNECTION_TIMEOUT, Timeout)
+  params.setParameter(SO_TIMEOUT, Timeout)
   
   private lazy val trustManagers = { 
     val factory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm)
