@@ -8,18 +8,16 @@ import org.apache.http.conn.scheme.Scheme
 
 import dispatch._
 
-object TrustedHttps {
+object TrustedHttps extends TrustedHttps(None, None, None) {
   case class Store(path: String, password: String)
-
-  def apply(): TrustedHttps = TrustedHttps()
 }
 
 import TrustedHttps.Store
 
 case class TrustedHttps protected(
-    private val truststore: Option[Store] = None
-  , private val keystore: Option[Store] = None
-  , timeout: Option[Int] = None
+    private val truststore: Option[Store]
+  , private val keystore: Option[Store]
+  , timeout: Option[Int]
   ) extends Http {
 
   client.getConnectionManager.getSchemeRegistry.register(
