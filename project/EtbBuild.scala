@@ -30,7 +30,7 @@ object BuildSettings {
 
   val bsUtil = commonSettings ++ Seq(
     name    := "Etb-Util"
-  , version := "0.2.13"
+  , version := "0.2.14"
   , initialCommands := "import hr.element.etb.Pimps._"
   )
 
