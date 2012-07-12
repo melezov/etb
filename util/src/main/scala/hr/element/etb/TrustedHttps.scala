@@ -35,7 +35,7 @@ case class HttpsConfig protected(
   def setTimeout(t: Int) =
     copy(timeout = Some(t))
 
-  def removeTimeout(t: Int) =
+  def removeTimeout() =
     copy(timeout = None)
 
 // -----------------------------------------------------------------------------
