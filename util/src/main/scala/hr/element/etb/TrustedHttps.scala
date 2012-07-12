@@ -8,29 +8,37 @@ import org.apache.http.conn.scheme.Scheme
 
 import dispatch._
 
-object TrustedHttps extends TrustedHttps(None, None, None) {
+object HttpsConfig extends HttpsConfig(None, None, None) {
   case class Store(path: String, password: String)
 }
 
-import TrustedHttps.Store
+import HttpsConfig._
 
-case class TrustedHttps protected(
-    private val truststore: Option[Store]
-  , private val keystore: Option[Store]
+case class HttpsConfig protected(
+    truststore: Option[Store]
+  , keystore: Option[Store]
   , timeout: Option[Int]
-  ) extends Http {
+  ) {
 
-  client.getConnectionManager.getSchemeRegistry.register(
-    new Scheme("https", 443, sslSocketFactory)
-  )
+  def setTruststore(path: String, password: String) =
+    copy(truststore = Some(Store(path, password)))
 
-  for (t <- timeout) {
-    val params = client.getParams
-    import org.apache.http.params.CoreConnectionPNames._
+  def removeTruststore() =
+    copy(truststore = None)
 
-    params.setParameter(CONNECTION_TIMEOUT, t)
-    params.setParameter(SO_TIMEOUT, t)
-  }
+  def setKeystore(path: String, password: String) =
+    copy(keystore = Some(Store(path, password)))
+
+  def removeKeystore() =
+    copy(keystore = None)
+
+  def setTimeout(t: Int) =
+    copy(timeout = Some(t))
+
+  def removeTimeout(t: Int) =
+    copy(timeout = None)
+
+// -----------------------------------------------------------------------------
 
   private lazy val trustManagers = {
     for (t <- truststore) yield {
@@ -68,21 +76,21 @@ case class TrustedHttps protected(
     new SSLSocketFactory(sslContext)
   }
 
-  def setTruststore(path: String, password: String) =
-    copy(truststore = Some(Store(path, password)))
+// -----------------------------------------------------------------------------
 
-  def removeTruststore() =
-    copy(truststore = None)
+  def apply() = new TrustedHttps()
 
-  def setKeystore(path: String, password: String) =
-    copy(keystore = Some(Store(path, password)))
+  class TrustedHttps private[HttpsConfig]() extends Http {
+    client.getConnectionManager.getSchemeRegistry.register(
+      new Scheme("https", 443, sslSocketFactory)
+    )
 
-  def removeKeystore() =
-    copy(keystore = None)
+    for (t <- timeout) {
+      val params = client.getParams
+      import org.apache.http.params.CoreConnectionPNames._
 
-  def setTimeout(t: Int) =
-    copy(timeout = Some(t))
-
-  def removeTimeout(t: Int) =
-    copy(timeout = None)
+      params.setParameter(CONNECTION_TIMEOUT, t)
+      params.setParameter(SO_TIMEOUT, t)
+    }
+  }
 }
