@@ -30,8 +30,8 @@ object BuildSettings {
 
   val bsUtil = commonSettings ++ Seq(
     name    := "Etb-Util"
-  , version := "0.2.10"
-  , initialCommands := "import hr.element.etb.Pimps._" 
+  , version := "0.2.11"
+  , initialCommands := "import hr.element.etb.Pimps._"
   )
 
   val bsLift = commonSettings ++ Seq(

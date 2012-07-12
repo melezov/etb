@@ -8,74 +8,83 @@ import org.apache.http.conn.scheme.Scheme
 
 import dispatch._
 
-object TrustedHttps{
-  def apply() =
-    new TrustedHttps("","")
+object TrustedHttps {
+  case class Store(path: String, password: String)
+
+  def apply(): TrustedHttps = TrustedHttps()
 }
 
+import TrustedHttps.Store
 
 case class TrustedHttps protected(
-    truststore: String
-  , truststorePassword: String
-  , ks: Option[String] = None
-  , keystorePassword: Option[String] = None
-  , Timeout: Option[Int] = None
+    private val truststore: Option[Store] = None
+  , private val keystore: Option[Store] = None
+  , timeout: Option[Int] = None
   ) extends Http {
+
   client.getConnectionManager.getSchemeRegistry.register(
     new Scheme("https", 443, sslSocketFactory)
   )
 
-  Timeout match {
-    case None => // Do nothing
-    case Some(x) => {
-      val params = client.getParams
-      import org.apache.http.params.CoreConnectionPNames._
-      params.setParameter(CONNECTION_TIMEOUT, x)
-      params.setParameter(SO_TIMEOUT, x)
+  for (t <- timeout) {
+    val params = client.getParams
+    import org.apache.http.params.CoreConnectionPNames._
+
+    params.setParameter(CONNECTION_TIMEOUT, t)
+    params.setParameter(SO_TIMEOUT, t)
+  }
+
+  private lazy val trustManagers = {
+    for (t <- truststore) yield {
+      val factory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm)
+      val tI = KeyStore.getInstance(KeyStore.getDefaultType)
+      val tS = classOf[TrustedHttps].getResourceAsStream(t.path)
+      val tP = t.password.toCharArray()
+      tI.load(tS, tP)
+      factory.init(tI)
+      factory.getTrustManagers
     }
   }
 
-
-  private lazy val trustManagers = {
-    val factory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm)
-    val keystore = KeyStore.getInstance(KeyStore.getDefaultType)
-    val kS = classOf[TrustedHttps].getResourceAsStream(truststore)
-    keystore.load(kS, truststorePassword.toCharArray())
-    factory.init(keystore)
-    factory.getTrustManagers
-  }
-
-  private def keyManagers(k: String, p: String) = {
-    val kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm)
-    val keystore = KeyStore.getInstance("PKCS12");
-    val kS = classOf[TrustedHttps].getResourceAsStream(k)
-    keystore.load(kS, p.toCharArray())
-    kmf.init(keystore, p.toCharArray())
-    kmf.getKeyManagers
+  private lazy val keyManagers = {
+    for (k <- keystore) yield {
+      val kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm)
+      val kI = KeyStore.getInstance("PKCS12");
+      val kS = classOf[TrustedHttps].getResourceAsStream(k.path)
+      val kP = k.password.toCharArray()
+      kI.load(kS, kP)
+      kmf.init(kI, kP)
+      kmf.getKeyManagers
+    }
   }
 
   private lazy val sslSocketFactory = {
-    val km = (ks,keystorePassword) match {
-      case (None, None) => null
-      case (Some(k),Some(p)) => keyManagers(k,p)
-    }
     val sslContext = javax.net.ssl.SSLContext.getInstance("TLS")
-    sslContext.init(km, trustManagers, new SecureRandom())
+
+    sslContext.init(
+      keyManagers.getOrElse(null)
+    , trustManagers.getOrElse(null)
+    , new SecureRandom()
+    )
+
     new SSLSocketFactory(sslContext)
   }
 
-  def setTruststore(truststore: String, truststorePassword: String) =
-    copy(
-        truststore = truststore
-      , truststorePassword = truststorePassword
-      )
+  def setTruststore(path: String, password: String) =
+    copy(truststore = Some(Store(path, password)))
 
-  def setKeyStore(ks: Option[String], keystorePassword: Option[String]) =
-    copy( ks = ks
-        , keystorePassword = keystorePassword
-        )
+  def removeTruststore() =
+    copy(truststore = None)
 
-  def setTimeout(Timeout: Option[Int]) =
-    copy( Timeout = Timeout )
+  def setKeystore(path: String, password: String) =
+    copy(keystore = Some(Store(path, password)))
+
+  def removeKeystore() =
+    copy(keystore = None)
+
+  def setTimeout(t: Int) =
+    copy(timeout = Some(t))
+
+  def removeTimeout(t: Int) =
+    copy(timeout = None)
 }
-
