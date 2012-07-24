@@ -8,7 +8,7 @@ import org.apache.http.conn.scheme.Scheme
 
 import dispatch._
 
-object HttpsConfig extends HttpsConfig(None, None, None) {
+object HttpsConfig extends HttpsConfig(None, None, None, None) {
   case class Store(path: String, password: String)
 }
 
@@ -17,8 +17,8 @@ import HttpsConfig._
 case class HttpsConfig protected(
     truststore: Option[Store]
   , keystore: Option[Store]
-  , timeout: Option[Int]
-  ) {
+  , connectionTimeout: Option[Int]
+  , readTimeout: Option[Int]) {
 
   def setTruststore(path: String, password: String) =
     copy(truststore = Some(Store(path, password)))
@@ -32,11 +32,17 @@ case class HttpsConfig protected(
   def removeKeystore() =
     copy(keystore = None)
 
-  def setTimeout(t: Int) =
-    copy(timeout = Some(t))
+  def setConnectionTimeout(t: Int) =
+    copy(connectionTimeout = Some(t))
 
-  def removeTimeout() =
-    copy(timeout = None)
+  def removeConnectionTimeout() =
+    copy(connectionTimeout = None)
+
+  def setReadTimeout(t: Int) =
+    copy(readTimeout = Some(t))
+
+  def removeReadTimeout() =
+    copy(readTimeout = None)
 
 // -----------------------------------------------------------------------------
 
@@ -85,12 +91,8 @@ case class HttpsConfig protected(
       new Scheme("https", 443, sslSocketFactory)
     )
 
-    for (t <- timeout) {
-      val params = client.getParams
-      import org.apache.http.params.CoreConnectionPNames._
-
-      params.setParameter(CONNECTION_TIMEOUT, t)
-      params.setParameter(SO_TIMEOUT, t)
-    }
+    import org.apache.http.params.CoreConnectionPNames._
+    connectionTimeout.foreach(client.getParams.setParameter(CONNECTION_TIMEOUT, _))
+    readTimeout.foreach(client.getParams.setParameter(SO_TIMEOUT, _))
   }
 }
