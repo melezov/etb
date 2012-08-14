@@ -45,6 +45,10 @@ object Pimps extends Pimps {
   class PimpedString(s: String) {
     def ksp = WhiteSpaces.replaceAllIn(s, " ") trim
     def kas = WhiteSpaces.replaceAllIn(s, "")
+
+    def toElem = ConstructingParser
+      .fromSource(Source.fromString(s), true)
+      .document.docElem.asInstanceOf[Elem]
   }
 
   // ----------------------------------------------------------------------------

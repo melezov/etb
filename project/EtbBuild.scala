@@ -30,13 +30,13 @@ object BuildSettings {
 
   val bsUtil = commonSettings ++ Seq(
     name    := "Etb-Util"
-  , version := "0.2.15"
+  , version := "0.2.16"
   , initialCommands := "import hr.element.etb.Pimps._"
   )
 
   val bsLift = commonSettings ++ Seq(
     name    := "Etb-Lift"
-  , version := "0.0.20"
+  , version := "0.0.21"
   )
 
   val bsImg = commonSettings ++ Seq(
@@ -56,7 +56,7 @@ object Dependencies {
   val mimeTypes = "hr.element.onebyseven.common" % "mimetypes" % "2012-02-12"
 
   //test
-  val scalaTest = "org.scalatest" %% "scalatest" % "1.7.1" % "test"
+  val scalaTest = "org.scalatest" %% "scalatest" % "2.0.M2" % "test"
 
   val depsUtil = Seq(
     commonsCodec
