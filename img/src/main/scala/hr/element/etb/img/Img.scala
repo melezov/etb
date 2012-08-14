@@ -8,11 +8,11 @@ trait Img extends Cloneable {
   def toMemImg: MemImg
   def toBufImg: BufImg
 
-  def fill(color: Int): Unit
+  def fill(color: Int): this.type
   def clear() = fill(0)
 
   def crop(dXY: Int): Img
-  def bitBlt(iI: Img, pX: Int, pY: Int): Unit
+  def bitBlt(iI: Img, pX: Int, pY: Int): this.type
 
   override lazy val hashCode = w << 16 + h
 

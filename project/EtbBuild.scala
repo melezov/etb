@@ -14,7 +14,7 @@ object BuildSettings {
 
   val commonSettings = Defaults.defaultSettings ++ Seq(
     organization := "hr.element.etb"
-  , crossScalaVersions := Seq("2.9.2", "2.9.1-1", "2.9.1", "2.9.0-1", "2.9.0")
+  , crossScalaVersions := Seq("2.10.0-M6", "2.9.2", "2.9.1-1", "2.9.1", "2.9.0-1", "2.9.0")
   , scalaVersion <<= (crossScalaVersions) { versions => versions.head }
   , scalacOptions := Seq("-unchecked", "-deprecation", "-encoding", "UTF-8", "-optimise")
   , unmanagedSourceDirectories in Compile <<= (scalaSource in Compile)( _ :: Nil)
@@ -30,18 +30,18 @@ object BuildSettings {
 
   val bsUtil = commonSettings ++ Seq(
     name    := "Etb-Util"
-  , version := "0.2.16"
+  , version := "0.2.17"
   , initialCommands := "import hr.element.etb.Pimps._"
   )
 
   val bsLift = commonSettings ++ Seq(
     name    := "Etb-Lift"
-  , version := "0.0.21"
+  , version := "0.0.22"
   )
 
   val bsImg = commonSettings ++ Seq(
     name    := "Etb-Img"
-  , version := "0.1.0"
+  , version := "0.1.1"
   )
 }
 

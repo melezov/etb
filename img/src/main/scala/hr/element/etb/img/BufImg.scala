@@ -93,12 +93,13 @@ class BufImg(val w: Int, val h: Int)
 
   //  ---------------------------------------------------------------------------
 
-  def withG2D(f: java.awt.Graphics2D => Unit): Unit = {
+  def withG2D(f: java.awt.Graphics2D => Unit): this.type = {
     val g2D = super.createGraphics();
     g2D.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC)
     g2D.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY)
     f(g2D)
     g2D.dispose()
+    this
   }
 
   //  ---------------------------------------------------------------------------
@@ -116,7 +117,7 @@ class BufImg(val w: Int, val h: Int)
     nI
   }
 
-  def bitBlt(iI: Img, pX: Int, pY: Int): Unit = withG2D {
+  def bitBlt(iI: Img, pX: Int, pY: Int) = withG2D {
     _.drawImage(iI.toBufImg, pX, pY, null)
   }
 

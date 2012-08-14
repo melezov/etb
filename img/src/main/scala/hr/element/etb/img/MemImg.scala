@@ -12,6 +12,14 @@ class MemImg(val w: Int, val h: Int, val px: Array[Int]) extends Img {
 
   //  ---------------------------------------------------------------------------
 
+  def apply(x: Int, y: Int) =
+    px(x + y * w)
+
+  def update(x: Int, y: Int, c: Int) =
+    px(x + y * w) = c
+
+  //  ---------------------------------------------------------------------------
+
   def toBufImg = {
     var nI = new BufImg(w, h)
     nI.setPx(px)
@@ -24,8 +32,10 @@ class MemImg(val w: Int, val h: Int, val px: Array[Int]) extends Img {
 
   //  ---------------------------------------------------------------------------
 
-  def fill(col: Int) =
+  def fill(col: Int) = {
     Arrays.fill(px, col)
+    this
+  }
 
   def toGrayscale() {
     for (index <- 0 until s) {
@@ -41,7 +51,7 @@ class MemImg(val w: Int, val h: Int, val px: Array[Int]) extends Img {
 
   //  ---------------------------------------------------------------------------
 
-  def bitBlt(iI: Img, pX: Int, pY: Int) {
+  def bitBlt(iI: Img, pX: Int, pY: Int) = {
     val sX2 = pX
     val sY2 = pY
     val eX2 = pX + iI.w
@@ -64,6 +74,8 @@ class MemImg(val w: Int, val h: Int, val px: Array[Int]) extends Img {
           System.arraycopy(mI.px, offset + y * mI.w, px, sX1 + y * w, limit);
       }
     }
+
+    this
   }
 
   def crop(xy: Int) = {

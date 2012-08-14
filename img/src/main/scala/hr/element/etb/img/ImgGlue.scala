@@ -10,7 +10,6 @@ case class ImgGlue(iL: Img*)(implicit val col: Int = 0x3f3f3f, implicit val spac
   lazy val sumW = iL.map(_.w).sum + space
 
   def gX = {
-
     val gI = new MemImg(sumW, maxH)
     println(gI)
     gI.fill(col)
