@@ -20,13 +20,30 @@ trait StaticCSS {
       ) map ("-"+) getOrElse ("")
     )
 
+  protected val defaultMinified: PartialFunction[String, String] = {
+    case "all" =>
+      ".min"
+
+    case "prod" if Props.productionMode =>
+      ".min"
+  }
+
+  protected def getSuffix(min: Option[String]) = (
+    defaultMinified lift
+    min.getOrElse("prod")
+    getOrElse ("")
+  )
+
   def serveLink(
-    name: String, version: Option[String], media: Option[String]) = {
+      name: String
+    , version: Option[String]
+    , media: Option[String]
+    , min: Option[String]) = {
 
     val someMedia = media.getOrElse("screen")
 
     val filename =
-      getNameWithVersion(name, version)
+      getNameWithVersion(name, version) + getSuffix(min)
 
     val path =
       if (name.startsWith("../")) {
@@ -58,10 +75,11 @@ trait StaticCSS {
     val name = S.attr("name")
     val version = S.attr("version")
     val media = S.attr("media")
+    val min = S.attr("min")
 
     name match {
       case Full(n) =>
-        serveLink(n, version, media)
+        serveLink(n, version, media, min)
 
       case _ =>
         Comment("FIXME: Link name attribute was not defined!")

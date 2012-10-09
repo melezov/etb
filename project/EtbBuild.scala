@@ -1,30 +1,30 @@
 import sbt._
 import Keys._
 
-object Resolvers {
-  val eleRepo = "Element Repo" at "http://maven.element.hr/nexus/content/groups/public"
-
-  val res = Seq(
-    eleRepo
-  )
+object Repositories {
+  val elementNexus =    "Element Nexus"    at "http://maven.element.hr/nexus/content/groups/public"
+  val elementReleases = "Element Releases" at "http://maven.element.hr/nexus/content/repositories/releases/"
 }
 
 object BuildSettings {
-  import Resolvers._
+  import Repositories._
 
   val commonSettings = Defaults.defaultSettings ++ Seq(
     organization := "hr.element.etb"
   , crossScalaVersions := Seq("2.9.2", "2.9.1-1", "2.9.1", "2.9.0-1", "2.9.0")
-  , scalaVersion <<= (crossScalaVersions) { versions => versions.head }
-  , scalacOptions := Seq("-unchecked", "-deprecation", "-encoding", "UTF-8", "-optimise")
-  , unmanagedSourceDirectories in Compile <<= (scalaSource in Compile)( _ :: Nil)
-  , unmanagedSourceDirectories in Test    <<= (scalaSource in Test   )( _ :: Nil)
+  , scalaVersion <<= crossScalaVersions(_.head)
+  , scalacOptions := Seq(
+      "-unchecked", "-deprecation", "-encoding", "UTF-8", "-optimise"
+//    , "-feature", "-language:postfixOps", "-language:implicitConversions", "-language:existentials"
+    )
+  , unmanagedSourceDirectories in Compile <<= (scalaSource in Compile)(_ :: Nil)
+  , unmanagedSourceDirectories in Test    <<= (scalaSource in Test   )(_ :: Nil)
   , publishArtifact in (Compile, packageDoc) := false
-  , resolvers := res
-  , externalResolvers <<= resolvers map { rs =>
-      Resolver.withDefaultResolvers(rs, mavenCentral = false, scalaTools = false)
+  , resolvers := Seq(elementNexus)
+  , externalResolvers <<= resolvers map { rS =>
+      Resolver.withDefaultResolvers(rS, mavenCentral = false)
     }
-  , publishTo := Some("Element Releases" at "http://maven.element.hr/nexus/content/repositories/releases/")
+  , publishTo := Some(elementReleases)
   , credentials += Credentials(Path.userHome / ".publish" / "element.credentials")
   )
 
@@ -36,7 +36,7 @@ object BuildSettings {
 
   val bsLift = commonSettings ++ Seq(
     name    := "Etb-Lift"
-  , version := "0.0.21-P0"
+  , version := "0.0.22-P0"
   )
 
   val bsImg = commonSettings ++ Seq(
@@ -61,19 +61,19 @@ object Dependencies {
     commonsCodec
   , dispatch
     //test
-  , scalaTest
+  //, scalaTest
   )
 
   val depsLift = Seq(
     liftWebkit
   , mimeTypes
     //test
-  , scalaTest
+  //, scalaTest
   )
 
   val depsImg = Seq(
     //test
-    scalaTest
+    //scalaTest
   )
 }
 

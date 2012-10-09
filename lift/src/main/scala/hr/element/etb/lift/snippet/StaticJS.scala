@@ -34,9 +34,10 @@ trait StaticJS {
     getOrElse ("")
   )
 
-  def serveScript(name: String,
-    version: Option[String],
-    min: Option[String]) = {
+  def serveScript(
+      name: String
+    , version: Option[String]
+    , min: Option[String]) = {
 
     val filename =
       getNameWithVersion(name, version) + getSuffix(min)
