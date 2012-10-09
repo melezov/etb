@@ -14,7 +14,7 @@ object BuildSettings {
 
   val commonSettings = Defaults.defaultSettings ++ Seq(
     organization := "hr.element.etb"
-  , crossScalaVersions := Seq("2.10.0-M6", "2.9.2", "2.9.1-1", "2.9.1", "2.9.0-1", "2.9.0")
+  , crossScalaVersions := Seq("2.9.2", "2.9.1-1", "2.9.1", "2.9.0-1", "2.9.0")
   , scalaVersion <<= (crossScalaVersions) { versions => versions.head }
   , scalacOptions := Seq("-unchecked", "-deprecation", "-encoding", "UTF-8", "-optimise")
   , unmanagedSourceDirectories in Compile <<= (scalaSource in Compile)( _ :: Nil)
@@ -30,33 +30,32 @@ object BuildSettings {
 
   val bsUtil = commonSettings ++ Seq(
     name    := "Etb-Util"
-  , version := "0.2.17"
+  , version := "0.2.16-P0"
   , initialCommands := "import hr.element.etb.Pimps._"
   )
 
   val bsLift = commonSettings ++ Seq(
     name    := "Etb-Lift"
-  , version := "0.0.22"
+  , version := "0.0.21-P0"
   )
 
   val bsImg = commonSettings ++ Seq(
     name    := "Etb-Img"
-  , version := "0.1.1"
+  , version := "0.1.0"
   )
 }
 
 object Dependencies {
   //liftweb
-  val liftVersion = "2.4"
-  val liftWebkit = "net.liftweb" % "lift-webkit_2.9.1" % liftVersion
+  val liftWebkit = "net.liftweb" %% "lift-webkit" % "2.5-M1" % "provided"
 
   val commonsCodec = "commons-codec" % "commons-codec" % "1.6"
-  val dispatch = "net.databinder" %% "dispatch-http" % "0.8.8" % "compile"
+  val dispatch = "net.databinder" %% "dispatch-http" % "0.8.8" % "provided"
 
   val mimeTypes = "hr.element.onebyseven.common" % "mimetypes" % "2012-02-12"
 
   //test
-  val scalaTest = "org.scalatest" %% "scalatest" % "2.0.M2" % "test"
+  val scalaTest = "org.scalatest" %% "scalatest" % "2.0.M4" % "test"
 
   val depsUtil = Seq(
     commonsCodec
@@ -94,7 +93,8 @@ object EtbBuild extends Build {
     "lift"
   , file("lift")
   , settings = bsLift ++ Seq(
-      libraryDependencies := depsLift
+      crossScalaVersions := Seq("2.9.2", "2.9.1-1", "2.9.1")
+    , libraryDependencies := depsLift
     )
   )
 
