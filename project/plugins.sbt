@@ -4,8 +4,8 @@ resolvers := Seq(
     url("http://maven.element.hr/nexus/content/groups/public/"))(Resolver.ivyStylePatterns)
 )
 
-externalResolvers <<= resolvers map { rs =>
-  Resolver.withDefaultResolvers(rs, mavenCentral = false)
+externalResolvers <<= resolvers map { r =>
+  Resolver.withDefaultResolvers(r, mavenCentral = false)
 }
 
 // =======================================================================================
