@@ -1,7 +1,7 @@
 resolvers := Seq(
-  "Element Nexus" at "http://maven.element.hr/nexus/content/groups/public/"
+  "Element Nexus" at "http://repo.element.hr/nexus/content/groups/public/"
 , Resolver.url("Element Nexus (Ivy)",
-    url("http://maven.element.hr/nexus/content/groups/public/"))(Resolver.ivyStylePatterns)
+    url("http://repo.element.hr/nexus/content/groups/public/"))(Resolver.ivyStylePatterns)
 )
 
 externalResolvers <<= resolvers map { r =>
@@ -19,3 +19,10 @@ externalResolvers <<= resolvers map { r =>
 // +-------------------------------------------------------------------------------------+
 
 addSbtPlugin("com.typesafe.sbteclipse" % "sbteclipse-plugin" % "2.1.0")
+
+// +-------------------------------------------------------------------------------------+
+// | Dependency report plugin (hhttps://github.com/mslinn/dependencyReport)              |
+// | Lists all jars in a nicely formatted way for easy inspection.                       |
+// +-------------------------------------------------------------------------------------+
+
+addSbtPlugin("com.micronautics" % "dependencyreport" % "0.1.1", "0.12.1")

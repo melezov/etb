@@ -2,6 +2,6 @@ Meta package with some pimping.
 
 SBT:
 
-resolvers += "Element Releases" at "http://maven.element.hr/nexus/content/repositories/releases/"
+resolvers += "Element Releases" at "http://repo.element.hr/nexus/content/repositories/releases/"
 
-libraryDependencies += "hr.element.etb" %% "etb-util" % "0.2.1"
+libraryDependencies += "hr.element.etb" %% "etb-util" % "0.2.16-P0"
