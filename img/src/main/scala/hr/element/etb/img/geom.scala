@@ -1,5 +1,4 @@
 package hr.element.etb.img.geom
-import scala.annotation.tailrec
 
 case class Point(x: Int, y: Int)
 case class Dim(w: Int, h: Int)

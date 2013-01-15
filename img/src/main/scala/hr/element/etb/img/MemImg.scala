@@ -1,11 +1,11 @@
 package hr.element.etb.img
 
 import java.util.Arrays
-import java.awt.image
-import java.io.File
-import scala.math.{ min, max }
 
-class MemImg(val w: Int, val h: Int, val px: Array[Int]) extends Img {
+import scala.math.max
+import scala.math.min
+
+class MemImg(val w: Int, val h: Int, val px: Array[Int]) extends Img[MemImg] {
 
   def this(w: Int, h: Int) =
     this(w, h, new Array[Int](w * h))
@@ -51,7 +51,7 @@ class MemImg(val w: Int, val h: Int, val px: Array[Int]) extends Img {
 
   //  ---------------------------------------------------------------------------
 
-  def bitBlt(iI: Img, pX: Int, pY: Int) = {
+  def bitBlt(iI: Img[_], pX: Int, pY: Int) = {
     val sX2 = pX
     val sY2 = pY
     val eX2 = pX + iI.w

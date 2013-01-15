@@ -1,6 +1,6 @@
 package hr.element.etb.img
 
-case class ImgGlue(iL: Img*)(implicit val col: Int = 0x3f3f3f, implicit val spacing: Int = 1) {
+case class ImgGlue(iL: Img[_]*)(implicit val col: Int = 0x3f3f3f, implicit val spacing: Int = 1) {
 
   lazy val space = if (spacing != 0) (iL.length - 1) * spacing else 0
 

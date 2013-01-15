@@ -34,18 +34,18 @@ object BuildSettings {
 
   val bsUtil = commonSettings ++ Seq(
     name    := "Etb-Util"
-  , version := "0.2.16-P0"
+  , version := "0.2.18-P1"
   , initialCommands := "import hr.element.etb.Pimps._"
   )
 
   val bsLift = commonSettings ++ Seq(
     name    := "Etb-Lift"
-  , version := "0.0.23-P0"
+  , version := "0.0.24-P1"
   )
 
   val bsImg = commonSettings ++ Seq(
     name    := "Etb-Img"
-  , version := "0.1.0"
+  , version := "0.2.0"
   )
 }
 
@@ -107,6 +107,7 @@ object EtbBuild extends Build {
   , file("img")
   , settings = bsImg ++ Seq(
       libraryDependencies ++= depsImg
+    , crossScalaVersions := Seq("2.8.0", "2.8.1", "2.8.2", "2.9.0", "2.9.0-1", "2.9.1", "2.9.1-1", "2.9.2", "2.9.3-RC1", "2.10.0") 
     )
   )
 }

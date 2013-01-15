@@ -1,22 +1,21 @@
 package hr.element.etb.img
 
-import java.io.{
-  File,
-  InputStream,
-  OutputStream,
-  FileInputStream,
-  FileOutputStream,
-  ByteArrayInputStream,
-  ByteArrayOutputStream
-}
 import java.awt.Color
 import java.awt.RenderingHints
 import java.awt.image.BufferedImage
-import javax.imageio.ImageIO
-
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
+import java.io.FileInputStream
+import java.io.FileOutputStream
+import java.io.InputStream
+import java.io.OutputStream
 import java.util.Arrays
 
+import javax.imageio.ImageIO
+
 object BufImg {
+  type ImplType = BufImg
+
   def fromStream(iS: InputStream): BufImg = {
     val lI = ImageIO.read(iS)
     val nI = new BufImg(lI.getWidth, lI.getHeight)
@@ -70,7 +69,7 @@ object BufImg {
 
 class BufImg(val w: Int, val h: Int)
     extends BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB)
-    with Img {
+    with Img[BufImg] {
 
   //  ---------------------------------------------------------------------------
 
@@ -117,7 +116,10 @@ class BufImg(val w: Int, val h: Int)
     nI
   }
 
-  def bitBlt(iI: Img, pX: Int, pY: Int) = withG2D {
+  def trim(bgCol: Int = 0, border: Int = 0) =
+    toMemImg.trim(bgCol, border).toBufImg
+
+  def bitBlt(iI: Img[_], pX: Int, pY: Int) = withG2D {
     _.drawImage(iI.toBufImg, pX, pY, null)
   }
 
