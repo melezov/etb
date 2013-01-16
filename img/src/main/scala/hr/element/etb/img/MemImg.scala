@@ -37,7 +37,7 @@ class MemImg(val w: Int, val h: Int, val px: Array[Int]) extends Img[MemImg] {
     this
   }
 
-  def toGrayscale() {
+  def toGrayscale() = {
     for (index <- 0 until s) {
       val v = px(index)
 
@@ -47,6 +47,8 @@ class MemImg(val w: Int, val h: Int, val px: Array[Int]) extends Img[MemImg] {
 
       px(index) = ((r * 30 + g * 59 + 11 * b) / 100) * 0x010101;
     }
+
+    this
   }
 
   //  ---------------------------------------------------------------------------
