@@ -10,6 +10,8 @@ trait StaticCSS {
   val root = "static"
   val section = "css"
 
+  val extension = ".css"
+
   protected val defaultVersions: PartialFunction[String, String] =
     Map.empty
 
@@ -38,7 +40,8 @@ trait StaticCSS {
       name: String
     , version: Option[String]
     , media: Option[String]
-    , min: Option[String]) = {
+    , min: Option[String]
+    , suffix: String) = {
 
     val someMedia = media.getOrElse("screen")
 
@@ -47,9 +50,9 @@ trait StaticCSS {
 
     val path =
       if (name.startsWith("../")) {
-        "/%s/%s.css" format (root, filename.substring(3))
+        "/%s/%s%s" format (root, filename substring 3, suffix)
       } else {
-        "/%s/%s/%s.css" format (root, section, filename)
+        "/%s/%s/%s%s" format (root, section, filename, suffix)
       }
 
     <link href={ path } type="text/css" rel="stylesheet" media={ someMedia }/>
@@ -79,7 +82,7 @@ trait StaticCSS {
 
     name match {
       case Full(n) =>
-        serveLink(n, version, media, min)
+        serveLink(n, version, media, min, extension)
 
       case _ =>
         Comment("FIXME: Link name attribute was not defined!")

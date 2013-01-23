@@ -26,12 +26,12 @@ object BuildSettings {
   , "-language:postfixOps"
   , "-language:implicitConversions"
   , "-language:existentials"
-  )  
-  
+  )
+
   lazy val commonSettings = Defaults.defaultSettings ++
                        dependencyReportSettings ++ Seq(
     organization := "hr.element.etb"
-    
+
   , javaHome := sys.env.get("JDK16_HOME").map(file(_))
   , javacOptions := Seq(
       "-deprecation"
@@ -42,7 +42,7 @@ object BuildSettings {
     )
 
   , scalaVersion := "2.9.2"
-    
+
   , scalacOptions <<= scalaVersion map ( sV => Seq(
         "-unchecked"
       , "-deprecation"
@@ -57,17 +57,17 @@ object BuildSettings {
     )
   , unmanagedSourceDirectories in Compile <<= (scalaSource in Compile)(_ :: Nil)
   , unmanagedSourceDirectories in Test    <<= (scalaSource in Test   )(_ :: Nil)
-  
+
   , resolvers := Seq(ElementNexus, ElementReleases, ElementSnapshots)
   , externalResolvers <<= resolvers map { r =>
       Resolver.withDefaultResolvers(r, mavenCentral = false)
-    } 
-  
+    }
+
   , publishTo <<= version { version => Some(
       if (version endsWith "SNAPSHOT") ElementSnapshots else ElementReleases
-    )} 
+    )}
   , publishArtifact in (Compile, packageDoc) := false
-  
+
   , credentials += Credentials(Path.userHome / ".config" / "etb" / "nexus.config")
   )
 
@@ -79,7 +79,7 @@ object BuildSettings {
 
   lazy val bsLift = commonSettings ++ Seq(
     name    := "Etb-Lift"
-  , version := "0.0.25"
+  , version := "0.1.0"
   )
 
   lazy val bsImg = commonSettings ++ Seq(
@@ -124,7 +124,7 @@ object EtbBuild extends Build {
   , file("util")
   , settings = bsUtil ++ Seq(
       libraryDependencies ++= depsUtil
-    , crossScalaVersions := Seq("2.8.0", "2.8.1", "2.8.2", "2.9.0", "2.9.0-1", "2.9.1", "2.9.1-1", "2.9.2", "2.9.3-RC1", "2.10.0") 
+    , crossScalaVersions := Seq("2.8.0", "2.8.1", "2.8.2", "2.9.0", "2.9.0-1", "2.9.1", "2.9.1-1", "2.9.2", "2.9.3-RC1", "2.10.0")
     )
   )
 
@@ -142,7 +142,7 @@ object EtbBuild extends Build {
   , file("img")
   , settings = bsImg ++ Seq(
       libraryDependencies ++= depsImg
-    , crossScalaVersions := Seq("2.8.0", "2.8.1", "2.8.2", "2.9.0", "2.9.0-1", "2.9.1", "2.9.1-1", "2.9.2", "2.9.3-RC1", "2.10.0") 
+    , crossScalaVersions := Seq("2.8.0", "2.8.1", "2.8.2", "2.9.0", "2.9.0-1", "2.9.1", "2.9.1-1", "2.9.2", "2.9.3-RC1", "2.10.0")
     )
   )
 }

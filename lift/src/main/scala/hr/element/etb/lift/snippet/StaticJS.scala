@@ -10,6 +10,8 @@ trait StaticJS {
   val root = "static"
   val section = "js"
 
+  val extension = ".js"
+
   protected val defaultVersions: PartialFunction[String, String] =
     Map.empty
 
@@ -37,16 +39,17 @@ trait StaticJS {
   def serveScript(
       name: String
     , version: Option[String]
-    , min: Option[String]) = {
+    , min: Option[String]
+    , suffix: String) = {
 
     val filename =
       getNameWithVersion(name, version) + getSuffix(min)
 
     val path =
       if (name.startsWith("../")) {
-        "/%s/%s.js" format (root, filename.substring(3))
+        "/%s/%s%s" format (root, filename substring 3, suffix)
       } else {
-        "/%s/%s/%s.js" format (root, section, filename)
+        "/%s/%s/%s%s" format (root, section, filename, suffix)
       }
 
     <script type="text/javascript" src={ path }/>
@@ -59,7 +62,7 @@ trait StaticJS {
 
     name match {
       case Full(n) =>
-        serveScript(n, version, min)
+        serveScript(n, version, min, extension)
 
       case _ =>
         Comment("FIXME: Script name attribute was not defined!")

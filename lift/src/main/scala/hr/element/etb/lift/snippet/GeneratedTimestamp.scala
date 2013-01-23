@@ -11,5 +11,5 @@ trait GeneratedTimestamp {
   val bootTime = formatTime
 
   protected def timestampSuffix =
-    "-" + (if (Props.productionMode) bootTime else formatTime)
+    "?t=" + (if (Props.productionMode) bootTime else formatTime)
 }
