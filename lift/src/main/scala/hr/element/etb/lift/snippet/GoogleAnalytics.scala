@@ -9,9 +9,11 @@ import util._
 import Helpers._
 import BindPlus._
 
-object GoogleAnalytics {
+trait GoogleAnalytics {
   val Disabled = <!-- Google Analytics is disabled -->
   val Undefined = <!-- Google Analytics page tracking code is not defined -->
+
+  val pageTrackingCode: Option[String] = None
 
   def render(scripts: NodeSeq) = Props.productionMode match {
     case true => injectTrackingCode(scripts) openOr Undefined
@@ -27,7 +29,7 @@ object GoogleAnalytics {
    */
 
   def injectTrackingCode(scripts: NodeSeq) =
-    for (name <- S.attr("name"); value <- Props.get("ga.ptc"))
+    for (name <- S.attr("name"); value <- pageTrackingCode orElse Props.get("ga.ptc"))
       yield scripts.bind("ga", "ptc" -> Script(JsCrVar(name, value)))
 }
 
