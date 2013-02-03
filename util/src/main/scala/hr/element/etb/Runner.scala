@@ -1,6 +1,6 @@
 package hr.element.etb
-package object io {
 
+package object io {
   import sys.process._
   import sys.process.BasicIO.transferFully
 
@@ -11,7 +11,6 @@ package object io {
   implicit val WorkingDir = new File(".")
 
   object Runner {
-
     def apply(cmd: Seq[String], input: Array[Byte] = Array())(implicit workingDir: File, waitPeriod: Int) = {
       val pb = Process(cmd, workingDir)
 
@@ -50,5 +49,4 @@ package object io {
       t
     }
   }
-
 }

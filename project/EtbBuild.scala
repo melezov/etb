@@ -29,7 +29,7 @@ object BuildSettings {
   )
 
   lazy val commonSettings = Defaults.defaultSettings ++
-                       dependencyReportSettings ++ Seq(
+                            dependencyReportSettings ++ Seq(
     organization := "hr.element.etb"
 
   , javaHome := sys.env.get("JDK16_HOME").map(file(_))
@@ -73,7 +73,7 @@ object BuildSettings {
 
   lazy val bsUtil = commonSettings ++ Seq(
     name    := "Etb-Util"
-  , version := "0.2.18-SNAPSHOT"
+  , version := "0.2.18"
   , initialCommands := "import hr.element.etb.Pimps._"
   )
 
@@ -90,7 +90,7 @@ object BuildSettings {
 
 object Dependencies {
   lazy val commonsCodec = "commons-codec" % "commons-codec" % "1.7"
-  lazy val dispatch = "net.databinder" %% "dispatch-http" % "0.8.8"
+  lazy val dispatch = "net.databinder" %% "dispatch-http" % "0.8.9"
 
   lazy val mimeTypes = "hr.element.onebyseven.common" % "mimetypes" % "2012-02-12"
 
@@ -100,7 +100,7 @@ object Dependencies {
 
   lazy val depsUtil = Seq(
     commonsCodec
-  , dispatch % "provided"
+  , dispatch
 //  , scalaTest % "test"
   )
 
@@ -124,7 +124,7 @@ object EtbBuild extends Build {
   , file("util")
   , settings = bsUtil ++ Seq(
       libraryDependencies ++= depsUtil
-    , crossScalaVersions := Seq("2.8.0", "2.8.1", "2.8.2", "2.9.0", "2.9.0-1", "2.9.1", "2.9.1-1", "2.9.2", "2.9.3-RC1", "2.10.0")
+    , crossScalaVersions := Seq("2.9.0", "2.9.0-1", "2.9.1", "2.9.1-1", "2.9.2", "2.10.0")
     )
   )
 
