@@ -19,6 +19,6 @@ trait Helpers {
       UUID.fromString(uuid)
 
     def unapply(uuid: String): Option[UUID] =
-      try Some(apply(uuid)) catch { case _ => None }
+      tryo(apply(uuid))
   }
 }

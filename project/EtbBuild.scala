@@ -10,8 +10,21 @@ object Repositories {
 object BuildSettings {
   import Repositories._
 
-  //Dependency report plugin
-  import com.micronautics.dependencyReport.DependencyReport._
+  //Dependency graph plugin
+  import net.virtualvoid.sbt.graph.Plugin._
+
+  val scala2_8 = Seq(
+    "-unchecked"
+  , "-deprecation"
+  , "-optimise"
+  , "-encoding", "UTF-8"
+  , "-explaintypes"
+  , "-Xcheckinit"
+  , "-Xfatal-warnings"
+  , "-Yclosure-elim"
+  , "-Ydead-code"
+  , "-Yinline"
+  )
 
   val scala2_9 = Seq(
     "-Xmax-classfile-name", "72"
@@ -19,6 +32,9 @@ object BuildSettings {
 
   val scala2_9_1 = Seq(
     "-Yrepl-sync"
+  , "-Xlint"
+  , "-Xverify"
+  , "-Ywarn-all"
   )
 
   val scala2_10 = Seq(
@@ -29,7 +45,7 @@ object BuildSettings {
   )
 
   lazy val commonSettings = Defaults.defaultSettings ++
-                            dependencyReportSettings ++ Seq(
+                            graphSettings ++ Seq(
     organization := "hr.element.etb"
 
   , javaHome := sys.env.get("JDK16_HOME").map(file(_))
@@ -41,20 +57,16 @@ object BuildSettings {
     , "-target", "1.6"
     )
 
-  , scalaVersion := "2.9.2"
+  , scalaVersion <<= crossScalaVersions(_.head)
 
-  , scalacOptions <<= scalaVersion map ( sV => Seq(
-        "-unchecked"
-      , "-deprecation"
-      , "-optimise"
-      , "-encoding", "UTF8"
-      ) ++ (sV match {
+  , scalacOptions <<= scalaVersion map ( sV => scala2_8 ++ (sV match {
         case x if (x startsWith "2.10.")                => scala2_9 ++ scala2_9_1 ++ scala2_10
         case x if (x startsWith "2.9.") && x >= "2.9.1" => scala2_9 ++ scala2_9_1
         case x if (x startsWith "2.9.")                 => scala2_9
         case _ => Nil
       } )
     )
+
   , unmanagedSourceDirectories in Compile <<= (scalaSource in Compile)(_ :: Nil)
   , unmanagedSourceDirectories in Test    <<= (scalaSource in Test   )(_ :: Nil)
 
@@ -73,18 +85,18 @@ object BuildSettings {
 
   lazy val bsUtil = commonSettings ++ Seq(
     name    := "Etb-Util"
-  , version := "0.2.18"
+  , version := "0.2.19"
   , initialCommands := "import hr.element.etb.Pimps._"
   )
 
   lazy val bsLift = commonSettings ++ Seq(
     name    := "Etb-Lift"
-  , version := "0.1.1"
+  , version := "0.1.2"
   )
 
   lazy val bsImg = commonSettings ++ Seq(
     name    := "Etb-Img"
-  , version := "0.2.0"
+  , version := "0.2.1"
   )
 }
 
@@ -100,8 +112,8 @@ object Dependencies {
 
   lazy val depsUtil = Seq(
     commonsCodec
-  , dispatch
-//  , scalaTest % "test"
+  , dispatch % "provided"
+  , scalaTest % "test"
   )
 
   lazy val depsLift = Seq(
@@ -124,7 +136,11 @@ object EtbBuild extends Build {
   , file("util")
   , settings = bsUtil ++ Seq(
       libraryDependencies ++= depsUtil
-    , crossScalaVersions := Seq("2.9.0", "2.9.0-1", "2.9.1", "2.9.1-1", "2.9.2", "2.10.0")
+    , crossScalaVersions := Seq(
+        "2.9.2"
+      , "2.9.0", "2.9.0-1", "2.9.1", "2.9.1-1" //, "2.9.3-RC1"
+      , "2.10.0"
+      )
     )
   )
 
@@ -132,7 +148,12 @@ object EtbBuild extends Build {
     "lift"
   , file("lift")
   , settings = bsLift ++ Seq(
-      crossScalaVersions := Seq("2.9.1", "2.9.1-1", "2.9.2", "2.10.0")
+      libraryDependencies ++= depsLift
+    , crossScalaVersions := Seq(
+        "2.9.2"
+      , "2.9.1", "2.9.1-1" //, "2.9.3-RC1"
+      , "2.10.0"
+      )
     , libraryDependencies ++= depsLift
     )
   )
@@ -142,7 +163,12 @@ object EtbBuild extends Build {
   , file("img")
   , settings = bsImg ++ Seq(
       libraryDependencies ++= depsImg
-    , crossScalaVersions := Seq("2.8.0", "2.8.1", "2.8.2", "2.9.0", "2.9.0-1", "2.9.1", "2.9.1-1", "2.9.2", "2.9.3-RC1", "2.10.0")
+    , crossScalaVersions := Seq(
+        "2.9.2"
+      , "2.8.0", "2.8.1", "2.8.2"
+      , "2.9.0", "2.9.0-1", "2.9.1", "2.9.1-1", "2.9.3-RC1"
+      , "2.10.0"
+      )
     )
   )
 }
