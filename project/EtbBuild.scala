@@ -91,7 +91,7 @@ object BuildSettings {
 
   lazy val bsLift = commonSettings ++ Seq(
     name    := "Etb-Lift"
-  , version := "0.1.2"
+  , version := "0.1.3"
   )
 
   lazy val bsImg = commonSettings ++ Seq(
@@ -106,7 +106,7 @@ object Dependencies {
 
   lazy val mimeTypes = "hr.element.onebyseven.common" % "mimetypes" % "2012-02-12"
 
-  lazy val liftWebkit = "net.liftweb" %% "lift-webkit" % "2.5-M4"
+  lazy val liftWebkit = "net.liftweb" %% "lift-webkit" % "2.5-RC2"
 
   lazy val scalaTest = "org.scalatest" %% "scalatest" % "2.0.M5b"
 

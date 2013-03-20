@@ -59,7 +59,7 @@ trait StaticCSS {
   }
 
   def comment(n: NodeSeq) = {
-    val htmlLink = render(n).toString.dropRight("</link>".length)
+    val htmlLink = render(n).toString.replaceFirst("</link>$", "").replaceFirst(" */>$", ">")
 
     Comment(
       S.attr("if") match {
