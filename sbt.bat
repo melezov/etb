@@ -1,5 +1,6 @@
 @echo off
 setlocal
+
 pushd
 cd "%~dp0"
 

@@ -57,7 +57,7 @@ object BuildSettings {
     , "-target", "1.6"
     )
 
-  , scalaVersion <<= crossScalaVersions(_.head)
+  , scalaVersion <<= crossScalaVersions(_.last)
 
   , scalacOptions <<= scalaVersion map ( sV => scala2_8 ++ (sV match {
         case x if (x startsWith "2.10.")                => scala2_9 ++ scala2_9_1 ++ scala2_10
@@ -91,7 +91,7 @@ object BuildSettings {
 
   lazy val bsLift = commonSettings ++ Seq(
     name    := "Etb-Lift"
-  , version := "0.1.3"
+  , version := "0.1.4"
   )
 
   lazy val bsImg = commonSettings ++ Seq(
@@ -106,7 +106,7 @@ object Dependencies {
 
   lazy val mimeTypes = "hr.element.onebyseven.common" % "mimetypes" % "2012-02-12"
 
-  lazy val liftWebkit = "net.liftweb" %% "lift-webkit" % "2.5-RC2"
+  lazy val liftWebkit = "net.liftweb" %% "lift-webkit" % "2.5-RC5"
 
   lazy val scalaTest = "org.scalatest" %% "scalatest" % "2.0.M5b"
 
@@ -137,9 +137,11 @@ object EtbBuild extends Build {
   , settings = bsUtil ++ Seq(
       libraryDependencies ++= depsUtil
     , crossScalaVersions := Seq(
-        "2.9.2"
-      , "2.9.0", "2.9.0-1", "2.9.1", "2.9.1-1" //, "2.9.3-RC1"
-      , "2.10.0"
+        "2.9.0", "2.9.0-1"
+      , "2.9.1", "2.9.1-1"
+      , "2.9.2"
+      , "2.9.3"
+      , "2.10.1"
       )
     )
   )
@@ -150,9 +152,10 @@ object EtbBuild extends Build {
   , settings = bsLift ++ Seq(
       libraryDependencies ++= depsLift
     , crossScalaVersions := Seq(
-        "2.9.2"
-      , "2.9.1", "2.9.1-1" //, "2.9.3-RC1"
-      , "2.10.0"
+        "2.9.1", "2.9.1-1"
+      , "2.9.2"
+      //, "2.9.3"
+      , "2.10.1"
       )
     , libraryDependencies ++= depsLift
     )
@@ -164,10 +167,11 @@ object EtbBuild extends Build {
   , settings = bsImg ++ Seq(
       libraryDependencies ++= depsImg
     , crossScalaVersions := Seq(
-        "2.9.2"
-      , "2.8.0", "2.8.1", "2.8.2"
-      , "2.9.0", "2.9.0-1", "2.9.1", "2.9.1-1", "2.9.3-RC1"
-      , "2.10.0"
+        "2.8.0", "2.8.1", "2.8.2"
+      , "2.9.0", "2.9.0-1", "2.9.1", "2.9.1-1"
+      , "2.9.2"
+      , "2.9.3"
+      , "2.10.1"
       )
     )
   )
