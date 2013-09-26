@@ -10,6 +10,9 @@ object Repositories {
 object BuildSettings {
   import Repositories._
 
+  //Eclipse plugin
+  import com.typesafe.sbteclipse.plugin.EclipsePlugin._
+
   //Dependency graph plugin
   import net.virtualvoid.sbt.graph.Plugin._
 
@@ -18,7 +21,7 @@ object BuildSettings {
   , "-deprecation"
   , "-optimise"
   , "-encoding", "UTF-8"
-  , "-explaintypes"
+//  , "-explaintypes"
   , "-Xcheckinit"
   , "-Xfatal-warnings"
   , "-Yclosure-elim"
@@ -45,6 +48,7 @@ object BuildSettings {
   )
 
   lazy val commonSettings = Defaults.defaultSettings ++
+                            eclipseSettings ++
                             graphSettings ++ Seq(
     organization := "hr.element.etb"
 
@@ -57,41 +61,43 @@ object BuildSettings {
     , "-target", "1.6"
     )
 
-  , scalaVersion <<= crossScalaVersions(_.last)
+  , crossScalaVersions := Seq(
+      "2.9.0", "2.9.0-1", "2.9.1", "2.9.1-1", "2.9.2", "2.9.3"
+    , "2.10.3-RC3"
+    )
+  , scalaVersion := crossScalaVersions.value.find(_ startsWith "2.10").get
 
-  , scalacOptions <<= scalaVersion map ( sV => scala2_8 ++ (sV match {
+  , scalacOptions := scala2_8 ++ (scalaVersion.value match {
         case x if (x startsWith "2.10.")                => scala2_9 ++ scala2_9_1 ++ scala2_10
         case x if (x startsWith "2.9.") && x >= "2.9.1" => scala2_9 ++ scala2_9_1
         case x if (x startsWith "2.9.")                 => scala2_9
         case _ => Nil
       } )
-    )
 
-  , unmanagedSourceDirectories in Compile <<= (scalaSource in Compile)(_ :: Nil)
-  , unmanagedSourceDirectories in Test    <<= (scalaSource in Test   )(_ :: Nil)
+  , unmanagedSourceDirectories in Compile := (scalaSource in Compile).value :: Nil
+  , unmanagedSourceDirectories in Test    := (scalaSource in Test).value :: Nil
 
   , resolvers := Seq(ElementNexus, ElementReleases, ElementSnapshots)
-  , externalResolvers <<= resolvers map { r =>
-      Resolver.withDefaultResolvers(r, mavenCentral = false)
-    }
+  , externalResolvers := Resolver.withDefaultResolvers(resolvers.value, mavenCentral = false)
 
-  , publishTo <<= version { version => Some(
-      if (version endsWith "SNAPSHOT") ElementSnapshots else ElementReleases
-    )}
+  , publishTo := Some(
+      if (version.value endsWith "SNAPSHOT") ElementSnapshots else ElementReleases
+    )
   , publishArtifact in (Compile, packageDoc) := false
-
   , credentials += Credentials(Path.userHome / ".config" / "etb" / "nexus.config")
+
+  , EclipseKeys.executionEnvironment := Some(EclipseExecutionEnvironment.JavaSE16)
   )
 
   lazy val bsUtil = commonSettings ++ Seq(
     name    := "Etb-Util"
-  , version := "0.2.19"
-  , initialCommands := "import hr.element.etb.Pimps._"
+  , version := "0.2.20"
+  , initialCommands := "import hr.element.etb._"
   )
 
   lazy val bsLift = commonSettings ++ Seq(
     name    := "Etb-Lift"
-  , version := "0.1.4"
+  , version := "0.1.5"
   )
 
   lazy val bsImg = commonSettings ++ Seq(
@@ -101,30 +107,42 @@ object BuildSettings {
 }
 
 object Dependencies {
-  lazy val commonsCodec = "commons-codec" % "commons-codec" % "1.7"
+  lazy val commonsCodec = "commons-codec" % "commons-codec" % "1.8"
   lazy val dispatch = "net.databinder" %% "dispatch-http" % "0.8.9"
 
+  lazy val scalaTime = "com.github.nscala-time" % "nscala-time" % "0.6.0" cross CrossVersion.binaryMapped {
+    case x if x startsWith "2.9.0" => "2.9.1"
+    case x if x startsWith "2.9.1" => "2.9.1"
+    case x => x
+  }
+
+  lazy val scalaIo = Def.setting {
+    scalaVersion.value match {
+      case x if x startsWith "2.9.0" => "com.github.scala-incubator.io" % "scala-io-file_2.9.1" % "0.4.1-seq"
+      case x if x startsWith "2.9.1" => "com.github.scala-incubator.io" % "scala-io-file_2.9.1" % "0.4.1-seq"
+      case x if x startsWith "2.9.3" => "com.github.scala-incubator.io" % "scala-io-file_2.9.2" % "0.4.1-seq"
+      case x if x startsWith "2.9."  => "com.github.scala-incubator.io" %% "scala-io-file" % "0.4.1-seq"
+      case x                         => "com.github.scala-incubator.io" %% "scala-io-file" % "0.4.2"
+    }
+  }
+
   lazy val mimeTypes = "hr.element.onebyseven.common" % "mimetypes" % "2012-02-12"
+  lazy val scalaUUID = "io.jvm" %% "scala-uuid" % "0.1.1"
 
-  lazy val liftWebkit = "net.liftweb" %% "lift-webkit" % "2.5-RC5"
+  lazy val liftWebkit = "net.liftweb" % "lift-webkit" % "2.5.1" cross CrossVersion.binaryMapped {
+    case x if x startsWith "2.9.0" => "2.9.1"
+    case x if x startsWith "2.9.3" => "2.9.2"
+    case x => x
+  }
 
-  lazy val scalaTest = "org.scalatest" %% "scalatest" % "2.0.M5b"
-
-  lazy val depsUtil = Seq(
-    commonsCodec
-  , dispatch % "provided"
-  , scalaTest % "test"
-  )
-
-  lazy val depsLift = Seq(
-    liftWebkit % "provided"
-  , mimeTypes
-//  , scalaTest % "test"
-  )
-
-  lazy val depsImg = Seq(
-//    scalaTest % "test"
-  )
+  lazy val scalaTest = Def.setting {
+    "org.scalatest" %% "scalatest" % (scalaVersion.value match {
+      case x if x startsWith "2.8." => "1.8"
+      case x if x startsWith "2.9." => "2.0.M5b"
+      case x if x startsWith "2.10." => "2.0.M8"
+      case x if x startsWith "2.11." => "2.0.M7"
+    } )
+  }
 }
 
 object EtbBuild extends Build {
@@ -135,13 +153,13 @@ object EtbBuild extends Build {
     "util"
   , file("util")
   , settings = bsUtil ++ Seq(
-      libraryDependencies ++= depsUtil
-    , crossScalaVersions := Seq(
-        "2.9.0", "2.9.0-1"
-      , "2.9.1", "2.9.1-1"
-      , "2.9.2"
-      , "2.9.3"
-      , "2.10.1"
+      libraryDependencies ++= Seq(
+        commonsCodec
+      , scalaUUID
+      , scalaTime
+      , scalaIo.value
+      , dispatch % "provided"
+      , scalaTest.value % "test"
       )
     )
   )
@@ -150,14 +168,11 @@ object EtbBuild extends Build {
     "lift"
   , file("lift")
   , settings = bsLift ++ Seq(
-      libraryDependencies ++= depsLift
-    , crossScalaVersions := Seq(
-        "2.9.1", "2.9.1-1"
-      , "2.9.2"
-      //, "2.9.3"
-      , "2.10.1"
+      libraryDependencies ++= Seq(
+        liftWebkit % "provided"
+      , mimeTypes
+      , scalaTest.value % "test"
       )
-    , libraryDependencies ++= depsLift
     )
   )
 
@@ -165,13 +180,8 @@ object EtbBuild extends Build {
     "img"
   , file("img")
   , settings = bsImg ++ Seq(
-      libraryDependencies ++= depsImg
-    , crossScalaVersions := Seq(
-        "2.8.0", "2.8.1", "2.8.2"
-      , "2.9.0", "2.9.0-1", "2.9.1", "2.9.1-1"
-      , "2.9.2"
-      , "2.9.3"
-      , "2.10.1"
+      libraryDependencies ++= Seq(
+        scalaTest.value % "test"
       )
     )
   )

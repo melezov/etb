@@ -13,12 +13,4 @@ trait Helpers {
       new FuncAttrBindParam(name, (n: NodeSeq) => Text(n.text format (data: _*)), newAttr)
     }
   }
-
-  object AsUUID {
-    def apply(uuid: String): UUID =
-      UUID.fromString(uuid)
-
-    def unapply(uuid: String): Option[UUID] =
-      tryo(apply(uuid))
-  }
 }
