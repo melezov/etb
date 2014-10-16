@@ -8,19 +8,19 @@ import scala.io.Source
 import java.io.{ StringWriter, PrintWriter }
 
 /**
- * The object <code>Pimps</code> provides helper methods for primitives
- *  and common Scala classes.
- *
- *  @author  Marko Elezović
- *  @version 0.1
- *  @since   0.1
- */
+  * The object <code>Pimps</code> provides helper methods for primitives
+  *  and common Scala classes.
+  *
+  *  @author  Marko Elezović
+  *  @version 0.1
+  *  @since   0.1
+  */
 
 object Pimps extends Pimps {
 
   /**
-   * Provides the <code>times</code> method for anonymous iteration.
-   */
+    * Provides the <code>times</code> method for anonymous iteration.
+    */
   class PimpedInt(i: Int) {
     def times(body: => Unit) { (1 to i).foreach(_ => body) }
   }
@@ -28,8 +28,8 @@ object Pimps extends Pimps {
   // ----------------------------------------------------------------------------
 
   /**
-   * Converts boolean to "yes" / "no" String values.
-   */
+    * Converts boolean to "yes" / "no" String values.
+    */
   class PimpedBoolean(b: Boolean) {
     def toYN = if (b) "yes" else "no"
   }
@@ -37,9 +37,9 @@ object Pimps extends Pimps {
   // ----------------------------------------------------------------------------
 
   /**
-   * String helper class with one method which removes all repeating
-   * whitespaces, new lines and non braking spaces (&nbsp;).
-   */
+    * String helper class with one method which removes all repeating
+    * whitespaces, new lines and non braking spaces (&nbsp;).
+    */
   private val WhiteSpaces = """[\s\xA0]+""".r
 
   class PimpedString(s: String) {
@@ -54,9 +54,9 @@ object Pimps extends Pimps {
   // ----------------------------------------------------------------------------
 
   /**
-   * Provides the <code>random</code> functionality for getting a random
-   *  value constrained by the underlying <code>Range</code>.
-   */
+    * Provides the <code>random</code> functionality for getting a random
+    *  value constrained by the underlying <code>Range</code>.
+    */
   class PimpedRange(r: Range) {
     def random = r(Random.nextInt(r.size))
   }
@@ -64,8 +64,8 @@ object Pimps extends Pimps {
   // ----------------------------------------------------------------------------
 
   /**
-   * For easy classpath retrieval of resources via class reference.
-   */
+    * For easy classpath retrieval of resources via class reference.
+    */
 
   class PimpedClass(c: Class[_]) {
     def getPackagePath(filename: String) = {
@@ -76,8 +76,8 @@ object Pimps extends Pimps {
   // ----------------------------------------------------------------------------
 
   /**
-   * Returns all matcher objects from a regex search.
-   */
+    * Returns all matcher objects from a regex search.
+    */
   class PimpedRegex(r: Regex) {
     def findAllMatchesIn(s: String): List[Regex.Match] = {
       r.findFirstMatchIn(s) match {
@@ -92,8 +92,8 @@ object Pimps extends Pimps {
   private object PrettyPrinter80 extends PrettyPrinter(80, 2)
 
   /**
-   * Provides a short-hand for pretty printing XML
-   */
+    * Provides a short-hand for pretty printing XML
+    */
   class PimpedElem(e: Elem) {
     def prettyPrint = ConstructingParser
       .fromSource(Source.fromString(PrettyPrinter80.format(e)), true)
@@ -101,15 +101,15 @@ object Pimps extends Pimps {
   }
 
   /**
-   * Provides a short-hand for pretty printing XML
-   */
+    * Provides a short-hand for pretty printing XML
+    */
   class PimpedNodeSeq(ns: NodeSeq) {
     def prettyPrintString = PrettyPrinter80.formatNodes(ns)
   }
 
   /**
-   * Gets the stack trace in String form
-   */
+    * Gets the stack trace in String form
+    */
   class PimpedThrowable(t: Throwable) {
     def stackTraceString: String = {
       val sW = new StringWriter

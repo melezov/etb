@@ -1,5 +1,5 @@
-Some utility classes and snippets for the Lift framework.
+Some utility classes and snippets for the Lift framework
 
     resolvers += "Element Releases" at "http://repo.element.hr/nexus/content/repositories/releases/"
 
-    libraryDependencies += "hr.element.lift" %% "etb-lift" % "0.1.5"
+    libraryDependencies += "hr.element.etb" %% "etb-lift" % "0.1.7"

@@ -1,12 +1,10 @@
+/*
 package hr.element.etb
 
 import java.security._
 import javax.net.ssl._
 
-import org.apache.http.conn.ssl.SSLSocketFactory
-import org.apache.http.conn.scheme.Scheme
-
-import dispatch.classic._
+import dispatch._
 
 object HttpsConfig extends HttpsConfig(None, None, None, None) {
   case class Store(path: String, password: String)
@@ -96,3 +94,4 @@ case class HttpsConfig protected(
     readTimeout.foreach(client.getParams.setParameter(SO_TIMEOUT, _))
   }
 }
+*/

@@ -32,8 +32,7 @@ class Workspace(val localPath: Path) {
     val ws = install(XKCD.now.toString)
     try {
       f(ws)
-    }
-    finally {
+    } finally {
       ws.uninstall()
     }
   }

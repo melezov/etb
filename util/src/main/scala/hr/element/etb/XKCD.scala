@@ -1,6 +1,7 @@
 package hr.element.etb
 
 import java.util.concurrent.atomic.AtomicLong
+import com.github.nscala_time.time.Imports._
 
 object XKCD {
   private val tag = new AtomicLong

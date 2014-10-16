@@ -16,40 +16,10 @@ object BuildSettings {
   //Dependency graph plugin
   import net.virtualvoid.sbt.graph.Plugin._
 
-  val scala2_8 = Seq(
-    "-unchecked"
-  , "-deprecation"
-  , "-optimise"
-  , "-encoding", "UTF-8"
-//  , "-explaintypes"
-  , "-Xcheckinit"
-  , "-Xfatal-warnings"
-  , "-Yclosure-elim"
-  , "-Ydead-code"
-  , "-Yinline"
-  )
-
-  val scala2_9 = Seq(
-    "-Xmax-classfile-name", "72"
-  )
-
-  val scala2_9_1 = Seq(
-    "-Yrepl-sync"
-  , "-Xlint"
-  , "-Xverify"
-  , "-Ywarn-all"
-  )
-
-  val scala2_10 = Seq(
-    "-feature"
-  , "-language:postfixOps"
-  , "-language:implicitConversions"
-  , "-language:existentials"
-  )
-
-  lazy val commonSettings = Defaults.defaultSettings ++
-                            eclipseSettings ++
-                            graphSettings ++ Seq(
+  lazy val commonSettings =
+    Defaults.defaultSettings ++
+    eclipseSettings ++
+    graphSettings ++ Seq(
     organization := "hr.element.etb"
 
   , javaHome := sys.env.get("JDK16_HOME").map(file(_))
@@ -62,17 +32,38 @@ object BuildSettings {
     )
 
   , crossScalaVersions := Seq(
-      "2.9.0", "2.9.0-1", "2.9.1", "2.9.1-1", "2.9.2", "2.9.3"
-    , "2.10.3-RC3"
+      "2.10.4"
+    , "2.11.2"
     )
-  , scalaVersion := crossScalaVersions.value.find(_ startsWith "2.10").get
+  , scalaVersion := crossScalaVersions.value.head
 
-  , scalacOptions := scala2_8 ++ (scalaVersion.value match {
-        case x if (x startsWith "2.10.")                => scala2_9 ++ scala2_9_1 ++ scala2_10
-        case x if (x startsWith "2.9.") && x >= "2.9.1" => scala2_9 ++ scala2_9_1
-        case x if (x startsWith "2.9.")                 => scala2_9
-        case _ => Nil
-      } )
+  , scalacOptions := Seq(
+      "-deprecation"
+    , "-encoding", "UTF-8"
+    , "-feature"
+    , "-language:existentials"
+    , "-language:implicitConversions"
+    , "-language:postfixOps"
+    , "-language:reflectiveCalls"
+    , "-optimise"
+    , "-unchecked"
+    , "-Xcheckinit"
+    , "-Xlint"
+    , "-Xmax-classfile-name", "72"
+    , "-Xno-forwarders"
+    , "-Xverify"
+    , "-Yclosure-elim"
+    , "-Ydead-code"
+    , "-Yinline-warnings"
+    , "-Yinline"
+    , "-Yrepl-sync"
+    , "-Ywarn-adapted-args"
+    , "-Ywarn-dead-code"
+    , "-Ywarn-inaccessible"
+    , "-Ywarn-nullary-override"
+    , "-Ywarn-nullary-unit"
+    , "-Ywarn-numeric-widen"
+    )
 
   , unmanagedSourceDirectories in Compile := (scalaSource in Compile).value :: Nil
   , unmanagedSourceDirectories in Test    := (scalaSource in Test).value :: Nil
@@ -81,68 +72,43 @@ object BuildSettings {
   , externalResolvers := Resolver.withDefaultResolvers(resolvers.value, mavenCentral = false)
 
   , publishTo := Some(
-      if (version.value endsWith "SNAPSHOT") ElementSnapshots else ElementReleases
+      if (version.value endsWith "-SNAPSHOT") ElementSnapshots else ElementReleases
     )
   , publishArtifact in (Compile, packageDoc) := false
   , credentials += Credentials(Path.userHome / ".config" / "etb" / "nexus.config")
 
   , EclipseKeys.executionEnvironment := Some(EclipseExecutionEnvironment.JavaSE16)
   )
-
-  lazy val bsUtil = commonSettings ++ Seq(
-    name    := "Etb-Util"
-  , version := "0.2.20"
-  , initialCommands := "import hr.element.etb._"
-  )
-
-  lazy val bsLift = commonSettings ++ Seq(
-    name    := "Etb-Lift"
-  , version := "0.1.5"
-  )
-
-  lazy val bsImg = commonSettings ++ Seq(
-    name    := "Etb-Img"
-  , version := "0.2.1"
-  )
 }
 
 object Dependencies {
-  lazy val commonsCodec = "commons-codec" % "commons-codec" % "1.8"
-  lazy val dispatch = "net.databinder" %% "dispatch-http" % "0.8.9"
+  lazy val commonsCodec = "commons-codec" % "commons-codec" % "1.9"
+  lazy val dispatch = "net.databinder.dispatch" %% "dispatch-core" % "0.11.2"
 
-  lazy val scalaTime = "com.github.nscala-time" % "nscala-time" % "0.6.0" cross CrossVersion.binaryMapped {
-    case x if x startsWith "2.9.0" => "2.9.1"
-    case x if x startsWith "2.9.1" => "2.9.1"
-    case x => x
-  }
+  lazy val scalaTime = "com.github.nscala-time" %% "nscala-time" % "1.4.0"
 
   lazy val scalaIo = Def.setting {
-    scalaVersion.value match {
-      case x if x startsWith "2.9.0" => "com.github.scala-incubator.io" % "scala-io-file_2.9.1" % "0.4.1-seq"
-      case x if x startsWith "2.9.1" => "com.github.scala-incubator.io" % "scala-io-file_2.9.1" % "0.4.1-seq"
-      case x if x startsWith "2.9.3" => "com.github.scala-incubator.io" % "scala-io-file_2.9.2" % "0.4.1-seq"
-      case x if x startsWith "2.9."  => "com.github.scala-incubator.io" %% "scala-io-file" % "0.4.1-seq"
-      case x                         => "com.github.scala-incubator.io" %% "scala-io-file" % "0.4.2"
+    "com.github.scala-incubator.io" %% "scala-io-file" % (
+      CrossVersion.partialVersion(scalaVersion.value) match {
+        case Some((2, scalaMajor)) if scalaMajor == 11 => "0.4.3-1"
+        case _ => "0.4.3"
+      }
+    )
+  }
+
+  lazy val scalaXml = Def.setting {
+    CrossVersion.partialVersion(scalaVersion.value) match {
+      case Some((2, scalaMajor)) if scalaMajor >= 11 =>
+        Seq("org.scala-lang.modules" %% "scala-xml" % "1.0.2")
+      case _ =>
+        Nil
     }
   }
 
   lazy val mimeTypes = "hr.element.onebyseven.common" % "mimetypes" % "2012-02-12"
-  lazy val scalaUUID = "io.jvm" %% "scala-uuid" % "0.1.1"
+  lazy val liftWebkit = "net.liftweb" %% "lift-webkit" % "2.5.1"
 
-  lazy val liftWebkit = "net.liftweb" % "lift-webkit" % "2.5.1" cross CrossVersion.binaryMapped {
-    case x if x startsWith "2.9.0" => "2.9.1"
-    case x if x startsWith "2.9.3" => "2.9.2"
-    case x => x
-  }
-
-  lazy val scalaTest = Def.setting {
-    "org.scalatest" %% "scalatest" % (scalaVersion.value match {
-      case x if x startsWith "2.8." => "1.8"
-      case x if x startsWith "2.9." => "2.0.M5b"
-      case x if x startsWith "2.10." => "2.0.M8"
-      case x if x startsWith "2.11." => "2.0.M7"
-    } )
-  }
+  lazy val scalaTest = "org.scalatest" %% "scalatest" % "2.2.2" % "test"
 }
 
 object EtbBuild extends Build {
@@ -152,26 +118,26 @@ object EtbBuild extends Build {
   lazy val util = Project(
     "util"
   , file("util")
-  , settings = bsUtil ++ Seq(
-      libraryDependencies ++= Seq(
-        commonsCodec
-      , scalaUUID
-      , scalaTime
+  , settings = commonSettings ++ Seq(
+      name    := "Etb-Util"
+    , version := "0.2.22"
+    , initialCommands := "import hr.element.etb._"
+    , libraryDependencies ++= Seq(
+        scalaTime
       , scalaIo.value
-      , dispatch % "provided"
-      , scalaTest.value % "test"
-      )
+      ) ++ scalaXml.value
     )
   )
 
   lazy val lift = Project(
     "lift"
   , file("lift")
-  , settings = bsLift ++ Seq(
-      libraryDependencies ++= Seq(
+  , settings = commonSettings ++ Seq(
+      name    := "Etb-Lift"
+    , version := "0.1.7"
+    , libraryDependencies ++= Seq(
         liftWebkit % "provided"
       , mimeTypes
-      , scalaTest.value % "test"
       )
     )
   )
@@ -179,10 +145,9 @@ object EtbBuild extends Build {
   lazy val img = Project(
     "img"
   , file("img")
-  , settings = bsImg ++ Seq(
-      libraryDependencies ++= Seq(
-        scalaTest.value % "test"
-      )
+  , settings = commonSettings ++ Seq(
+      name    := "Etb-Img"
+    , version := "0.2.3"
     )
   )
 }

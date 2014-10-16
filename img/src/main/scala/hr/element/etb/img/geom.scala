@@ -11,15 +11,13 @@ object Rect {
   def apply(p1: Point, p2: Point): Rect = {
     val (sx, ex) = if (p1.x <= p2.x) {
       (p1.x, p2.x)
-    }
-    else {
+    } else {
       (p2.x, p1.x)
     }
 
     val (sy, ey) = if (p1.y <= p2.y) {
       (p1.y, p2.y)
-    }
-    else {
+    } else {
       (p2.y, p1.y)
     }
 

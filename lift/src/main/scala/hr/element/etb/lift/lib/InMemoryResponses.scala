@@ -11,7 +11,7 @@ object MimeType {
     fileName lastIndexOf '.' match {
       case x if x > 0 =>
         val ext = fileName substring (x + 1) toLowerCase;
-        mimes find(_.extension == ext) map(_.mimeType) getOrElse(Default)
+        mimes find (_.extension == ext) map (_.mimeType) getOrElse (Default)
 
       case _ =>
         "application/octet-stream"

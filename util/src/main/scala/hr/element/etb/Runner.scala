@@ -7,11 +7,11 @@ package object io {
   import java.io.{ File, ByteArrayInputStream, ByteArrayOutputStream }
   import java.lang.{ Thread, Runnable, InterruptedException }
 
-  implicit val WaitPeriod = 60000
+  implicit val WaitPeriod = 60000L
   implicit val WorkingDir = new File(".")
 
   object Runner {
-    def apply(cmd: Seq[String], input: Array[Byte] = Array())(implicit workingDir: File, waitPeriod: Int) = {
+    def apply(cmd: Seq[String], input: Array[Byte] = Array())(implicit workingDir: File, waitPeriod: Long) = {
       val pb = Process(cmd, workingDir)
 
       val oS = new ByteArrayOutputStream

@@ -1,5 +1,5 @@
-Meta package with some pimping.
+Meta package with some pimping
 
     resolvers += "Element Releases" at "http://repo.element.hr/nexus/content/repositories/releases/"
 
-    libraryDependencies += "hr.element.etb" %% "etb-util" % "0.2.20"
+    libraryDependencies += "hr.element.etb" %% "etb-util" % "0.2.22"
