@@ -33,7 +33,7 @@ object BuildSettings {
 
   , crossScalaVersions := Seq(
       "2.10.4"
-    , "2.11.2"
+    , "2.11.5"
     )
   , scalaVersion := crossScalaVersions.value.head
 
@@ -82,10 +82,10 @@ object BuildSettings {
 }
 
 object Dependencies {
-  lazy val commonsCodec = "commons-codec" % "commons-codec" % "1.9"
+  lazy val commonsCodec = "commons-codec" % "commons-codec" % "1.10"
   lazy val dispatch = "net.databinder.dispatch" %% "dispatch-core" % "0.11.2"
 
-  lazy val scalaTime = "com.github.nscala-time" %% "nscala-time" % "1.4.0"
+  lazy val scalaTime = "com.github.nscala-time" %% "nscala-time" % "1.6.0"
 
   lazy val scalaIo = Def.setting {
     "com.github.scala-incubator.io" %% "scala-io-file" % (
@@ -99,7 +99,7 @@ object Dependencies {
   lazy val scalaXml = Def.setting {
     CrossVersion.partialVersion(scalaVersion.value) match {
       case Some((2, scalaMajor)) if scalaMajor >= 11 =>
-        Seq("org.scala-lang.modules" %% "scala-xml" % "1.0.2")
+        Seq("org.scala-lang.modules" %% "scala-xml" % "1.0.3")
       case _ =>
         Nil
     }
@@ -108,7 +108,7 @@ object Dependencies {
   lazy val mimeTypes = "hr.element.onebyseven.common" % "mimetypes" % "2012-02-12"
   lazy val liftWebkit = "net.liftweb" %% "lift-webkit" % "2.5.1"
 
-  lazy val scalaTest = "org.scalatest" %% "scalatest" % "2.2.2" % "test"
+  lazy val scalaTest = "org.scalatest" %% "scalatest" % "2.2.3" % "test"
 }
 
 object EtbBuild extends Build {
@@ -120,7 +120,7 @@ object EtbBuild extends Build {
   , file("util")
   , settings = commonSettings ++ Seq(
       name    := "Etb-Util"
-    , version := "0.2.22"
+    , version := "0.2.23"
     , initialCommands := "import hr.element.etb._"
     , libraryDependencies ++= Seq(
         scalaTime
